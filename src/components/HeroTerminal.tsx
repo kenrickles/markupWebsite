@@ -21,7 +21,7 @@ const LINES: { text: string; tone: 'cmd' | 'ok' | 'info' | 'warn' }[] = [
 ];
 
 const TONE_CLASS: Record<string, string> = {
-  cmd: 'text-[color:var(--fg)]',
+  cmd: 'text-[#e8edf2]',
   ok: 'text-[#62d0c3]',
   info: 'text-[#97a4b3]',
   warn: 'text-[#f0a848]',
@@ -85,12 +85,12 @@ export default function HeroTerminal() {
     }, root);
 
     return () => ctx.revert();
-  }, []);
+  }, [isStatic]);
 
   return (
     <div
       ref={rootRef}
-      className="hero-terminal relative overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 text-[12.5px] leading-6 shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+      className="hero-terminal relative overflow-hidden rounded-2xl border border-[#2a3340] bg-[#0d1117] p-5 text-[12.5px] leading-6 shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
       aria-label="Simulated deployment log"
     >
       {/* window chrome */}
@@ -98,7 +98,7 @@ export default function HeroTerminal() {
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-3 text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">
+        <span className="ml-3 text-[10px] uppercase tracking-[0.3em] text-[#97a4b3]">
           kenrick@galaxy — zsh
         </span>
       </div>
@@ -132,7 +132,7 @@ export default function HeroTerminal() {
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
           <div className="hero-terminal__bar-fill h-full rounded-full bg-gradient-to-r from-[#f0a848] to-[#62d0c3]" style={{ width: isStatic ? '100%' : '0%' }} />
         </div>
-        <span className={`hero-terminal__status text-[10px] uppercase tracking-[0.3em] text-[color:var(--accent)] ${isStatic ? '' : 'opacity-0'}`}>
+        <span className={`hero-terminal__status text-[10px] uppercase tracking-[0.3em] text-[#f0a848] ${isStatic ? '' : 'opacity-0'}`}>
           release · ready
         </span>
       </div>

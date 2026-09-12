@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 const links = [
   ["Work", "projects"],
   ["About", "about"],
@@ -9,6 +10,7 @@ const links = [
   ["Contact", "contact"],
 ];
 export default function SiteNav() {
+  const { theme, toggle: toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
   const toggle = useRef<HTMLButtonElement>(null);
@@ -68,6 +70,14 @@ export default function SiteNav() {
           <a href="mailto:kenrickles@gmail.com" className="nav-contact">
             Get in touch <ArrowUpRight size={16} />
           </a>
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            title={theme === "dark" ? "Daylight Ops" : "Ember & Ink"}
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
         </nav>
       </div>
     </header>

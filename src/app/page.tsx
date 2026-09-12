@@ -6,7 +6,13 @@ import { caseStudies } from "@/lib/caseStudies";
 import SiteNav from "@/components/SiteNav";
 import PortfolioMotion from "@/components/PortfolioMotion";
 import HeroTerminal from "@/components/HeroTerminal";
+import PageGate from "@/components/PageGate";
 import { CountUp } from "@/components/CountUp";
+import TerminalLauncher from "@/components/TerminalLauncher";
+import MagneticCursor from "@/components/MagneticCursor";
+import CommandPalette from "@/components/CommandPalette";
+import TiltCard from "@/components/TiltCard";
+import ScrambleText from "@/components/ScrambleText";
 import SpotlightCard from "@/components/SpotlightCard";
 import { assetPath } from "@/lib/site";
 
@@ -26,11 +32,14 @@ const workLabels = [
 export default function Home() {
   return (
     <>
+      <PageGate>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <SiteNav />
       <PortfolioMotion />
+      <MagneticCursor />
+      <CommandPalette />
       <main id="main">
         <section className="hero wrap" aria-labelledby="hero-title">
           <div className="hero-meta mono">
@@ -43,7 +52,9 @@ export default function Home() {
                 Infrastructure. Protocols. Possibility.
               </p>
               <h1 id="hero-title">
-                <span className="hero-line">Complex systems.</span>
+                <span className="hero-line">
+                  <ScrambleText text="Complex systems." as="span" duration={1200} />
+                </span>
                 <span className="hero-line">
                   Clear <em>thinking.</em>
                 </span>
@@ -57,12 +68,13 @@ export default function Home() {
                 </p>
               </div>
               <div className="hero-actions hero-enter">
-                <a className="button-primary" href="#projects">
+                <a className="button-primary" data-magnetic href="#projects">
                   Explore my work <ArrowDown size={18} />
                 </a>
-                <a className="text-action" href="mailto:kenrickles@gmail.com">
+                <a className="text-action" data-magnetic href="mailto:kenrickles@gmail.com">
                   Let’s talk <ArrowUpRight size={18} />
                 </a>
+                <TerminalLauncher />
               </div>
             </div>
             <div className="system-art" aria-hidden="true">
@@ -165,8 +177,8 @@ export default function Home() {
           </div>
           <div className="work-grid">
             {caseStudies.map((study, i) => (
+              <TiltCard key={study.slug} max={5}>
               <SpotlightCard
-                key={study.slug}
                 className={`work-card work-${i} reveal`}
               >
                 <Link
@@ -228,6 +240,7 @@ export default function Home() {
                   </div>
                 </Link>
               </SpotlightCard>
+              </TiltCard>
             ))}
           </div>
         </section>
@@ -426,6 +439,7 @@ export default function Home() {
         <span>Always building. Always learning.</span>
         <a href="#main">Back to top ↑</a>
       </footer>
+          </PageGate>
     </>
   );
 }

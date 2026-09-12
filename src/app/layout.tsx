@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import ThemeProvider from "@/components/ThemeProvider";
 import "./globals.css";
 import localFont from "next/font/local";
 import { SITE_URL } from "@/lib/site";
@@ -141,7 +142,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className={`antialiased ${geist.variable} ${mono.variable}`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

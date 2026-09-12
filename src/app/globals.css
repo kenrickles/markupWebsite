@@ -104,7 +104,7 @@ h2 {
 .site-header {
   position: sticky;
   top: 0;
-  background: #0d1117ed;
+  background: color-mix(in srgb, var(--bg) 93%, transparent);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   z-index: 30;
@@ -122,7 +122,7 @@ h2 {
 }
 .wordmark span {
   font-weight: 400;
-  color: #8d99a8;
+  color: var(--muted);
 }
 .wordmark b {
   color: var(--accent);
@@ -396,7 +396,7 @@ h2 {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  background-image: radial-gradient(#59634a60 0.7px, transparent 0.7px);
+  background-image: radial-gradient(#54452e60 0.7px, transparent 0.7px);
   background-size: 17px 17px;
   mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent);
 }
@@ -404,7 +404,7 @@ h2 {
   position: absolute;
   width: 120px;
   height: 120px;
-  border: 1px solid #829859;
+  border: 1px solid #c98f3d;
   border-radius: 50%;
   transform: rotateX(40deg);
 }
@@ -441,7 +441,7 @@ h2 {
   width: 90%;
 }
 .pipeline-art span {
-  border: 1px solid #586548;
+  border: 1px solid #54452e;
   background: #1d2518;
   padding: 15px 10px;
   font: 11px var(--font-geist-mono);
@@ -463,11 +463,11 @@ h2 {
 }
 .pipeline-art span:last-child {
   color: var(--accent);
-  border-color: #abc765;
+  border-color: #f0a848;
 }
 .terminal-art {
   width: 88%;
-  border: 1px solid #455037;
+  border: 1px solid #4a3a26;
   border-radius: 6px;
   background: #11170eed;
   padding: 25px;
@@ -493,7 +493,7 @@ h2 {
   gap: 24px;
 }
 .ai-art span {
-  border: 1px solid #46503d;
+  border: 1px solid #4a3a26;
   padding: 10px 12px;
   font: 12px var(--font-geist-mono);
 }
@@ -538,8 +538,8 @@ h2 {
 .tags span {
   font-size: 11px;
   padding: 5px 8px;
-  border: 1px solid #3c4334;
-  color: #b8c0ac;
+  border: 1px solid #39434f;
+  color: #8d99a8;
   border-radius: 3px;
 }
 .case-link {
@@ -600,7 +600,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  border-top: 1px solid #3a4132;
+  border-top: 1px solid #3a4654;
   margin-top: 35px;
   padding-top: 25px;
 }
@@ -670,7 +670,7 @@ h2 {
   margin-bottom: 8px;
 }
 .job-body li::marker {
-  color: #758d51;
+  color: #a87b34;
 }
 .credentials-grid {
   display: grid;
@@ -710,7 +710,7 @@ h2 {
 .contact-section {
   padding-block: 100px;
   background: var(--accent);
-  color: #162008;
+  color: #1a2130;
   scroll-margin-top: 85px;
 }
 .contact-section .eyebrow {
@@ -722,7 +722,7 @@ h2 {
 }
 .contact-section h2 a {
   display: inline;
-  box-shadow: 0 2px #708f37;
+  box-shadow: 0 2px #c98f3d;
 }
 .contact-section h2 svg {
   display: inline-block;
@@ -1183,4 +1183,148 @@ html.static-mode .hero-enter {
 html.static-mode .orbit-group,
 html.static-mode .orbit-dot {
   animation: none !important;
+}
+
+/* ================= THEME SYSTEM =================
+   Dark (default): Ember & Ink.  Light: Daylight Ops.
+   Terminal/monospace panels stay dark in both — consoles are dark IRL. */
+:root {
+  --bg-rgb: 13 17 23;
+  --accent-rgb: 240 168 72;
+  --accent-2: #62d0c3;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --glow: rgba(240, 168, 72, 0.14);
+  --grid-line: rgba(240, 168, 72, 0.05);
+}
+
+html.light {
+  --bg: #faf9f6;
+  --fg: #16202c;
+  --muted: #5c6b7a;
+  --accent: #c47f17;
+  --accent-2: #0e8f84;
+  --border: #dfe3e8;
+  --surface: #ffffff;
+  --surface-2: #f4f2ec;
+  --surface-strong: #ffffff;
+  --bg-rgb: 250 249 246;
+  --accent-rgb: 196 127 23;
+  --shadow-color: rgba(22, 32, 44, 0.12);
+  --glow: rgba(196, 127, 23, 0.12);
+  --grid-line: rgba(22, 32, 44, 0.045);
+  color-scheme: light;
+}
+
+html.light .hero-terminal,
+html.light .boot-screen,
+html.light .cmdk {
+  /* consoles stay dark in both themes */
+  background: #0d1117 !important;
+  color: #e8edf2 !important;
+  border-color: #2a3340 !important;
+}
+html.light .hero-terminal .text-\[color\:var\(--fg\)\],
+html.light .boot-line { color: #e8edf2; }
+
+/* smooth theme transition */
+html.theme-anim, html.theme-anim * {
+  transition: background-color 0.45s ease, color 0.35s ease,
+              border-color 0.45s ease, fill 0.35s ease, stroke 0.35s ease !important;
+}
+
+/* ---- theme toggle ---- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, transform 0.35s ease;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: rotate(20deg);
+}
+
+/* ---- terminal launch button ---- */
+.terminal-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 13px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.terminal-launch:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--glow);
+}
+.terminal-launch kbd {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+html.light .terminal-launch {
+  background: #0d1117;
+  border-color: #2a3340;
+  color: #97a4b3;
+}
+html.light .terminal-launch:hover {
+  color: #f0a848;
+  border-color: #f0a848;
+  background: #0d1117;
+}
+
+/* ---- magnetic cursor ---- */
+body.has-magnetic-cursor,
+body.has-magnetic-cursor a,
+body.has-magnetic-cursor button {
+  cursor: none;
+}
+.magnetic-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  z-index: 9999;
+  pointer-events: none;
+}
+.magnetic-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1.5px solid var(--accent);
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+.magnet-active {
+  transform: scale(1.04);
+}
+.tilt-card {
+  will-change: transform;
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .magnetic-cursor-dot, .magnetic-cursor-ring { display: none; }
 }
