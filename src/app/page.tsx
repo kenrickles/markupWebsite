@@ -51,7 +51,7 @@ export default function Home() {
               </p>
               <h1 id="hero-title">
                 <span className="hero-line">
-                  <ScrambleText text="Complex systems." as="span" duration={1200} />
+                  <ScrambleText text="Complex systems." duration={1200} />
                 </span>
                 <span className="hero-line">
                   Clear <em>thinking.</em>

@@ -67,7 +67,21 @@ export default function PortfolioMotion() {
       });
       const refresh = () => ScrollTrigger.refresh();
       document.addEventListener("toggle", refresh, true);
+      // Safety net: if rAF is throttled (occluded tab) tweens freeze at their first frame.
+      // After 4s snap all intro elements to their final state so content is never stuck hidden.
+      const safety = setTimeout(() => {
+        document.querySelectorAll<HTMLElement>(".hero-line, .hero-enter, .reveal").forEach((el) => {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        });
+        gsap.globalTimeline.getChildren(true, true, false).forEach((t) => {
+          if (t.progress() < 1 && t.repeat() === -1) return; // leave infinite loops alone
+          if (t.progress() < 1) t.progress(1);
+        });
+        ScrollTrigger.refresh();
+      }, 4000);
       return () => {
+        clearTimeout(safety);
         document.removeEventListener("toggle", refresh, true);
         gsap.ticker.remove(tick);
         lenis.destroy();

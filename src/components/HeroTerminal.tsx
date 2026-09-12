@@ -34,6 +34,7 @@ export default function HeroTerminal() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const linesRef = useRef<HTMLDivElement[]>([]);
   const cursorRef = useRef<HTMLSpanElement | null>(null);
+  const fallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isStatic = useStaticMode();
 
   useEffect(() => {
@@ -86,8 +87,24 @@ export default function HeroTerminal() {
         ease: 'none',
       });
 
-      // occluded tabs throttle rAF and freeze mid-animation — if the tab is hidden now,
-      // start the intro when it becomes visible (with a fallback so it always completes)
+      // occluded/background tabs throttle rAF to zero — tweens freeze mid-flight.
+      // Hard fallback: after 6s snap every element to its final state regardless.
+      const finalize = () => {
+        linesRef.current.forEach((el, i) => {
+          if (el) {
+            el.style.opacity = '1';
+            el.textContent = LINES[i]?.text ?? el.textContent;
+          }
+        });
+        const bar = root.querySelector('.hero-terminal__bar-fill') as HTMLElement | null;
+        if (bar) bar.style.width = '100%';
+        const status = root.querySelector('.hero-terminal__status') as HTMLElement | null;
+        if (status) status.style.opacity = '1';
+      };
+      fallbackRef.current = setTimeout(() => {
+        finalize();
+        tl.kill();
+      }, 6000);
       if (document.hidden) {
         tl.pause(0);
         const startWhenVisible = () => {
@@ -97,11 +114,13 @@ export default function HeroTerminal() {
           }
         };
         document.addEventListener('visibilitychange', startWhenVisible);
-        setTimeout(() => { tl.play(); document.removeEventListener('visibilitychange', startWhenVisible); }, 4000);
       }
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      if (fallbackRef.current) clearTimeout(fallbackRef.current);
+      ctx.revert();
+    };
   }, [isStatic]);
 
   return (
