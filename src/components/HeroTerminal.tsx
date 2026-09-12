@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
 import { useStaticMode } from './useStaticMode';
 
 /**
@@ -19,6 +20,8 @@ const LINES: { text: string; tone: 'cmd' | 'ok' | 'info' | 'warn' }[] = [
   { text: '✔ release gated · rollback plan armed · audit trail written', tone: 'ok' },
   { text: 'complex systems, shipped calmly_', tone: 'warn' },
 ];
+
+gsap.registerPlugin(TextPlugin);
 
 const TONE_CLASS: Record<string, string> = {
   cmd: 'text-[color:var(--fg)]',
