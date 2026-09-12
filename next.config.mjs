@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
-const basePath =
-  process.env.NEXT_PUBLIC_BASE_PATH ??
-  (process.env.NODE_ENV === "production" ? "/kenrick-portfolio" : "");
+// Root-domain deployment (kenrickles.com via Netlify): no basePath.
+// For GH Pages project-path builds, set NEXT_PUBLIC_BASE_PATH=/kenrick-portfolio explicitly.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const nextConfig = {
   output: "export",
   trailingSlash: true,
