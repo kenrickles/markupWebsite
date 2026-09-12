@@ -1,0 +1,15 @@
+{
+  "name": "Kenrick Tan Portfolio",
+  "short_name": "Kenrick Tan",
+  "description": "Protocol Engineer at Galaxy Digital. Infrastructure, digital assets, and practical AI.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#11130f",
+  "theme_color": "#f0a848",
+  "icons": [
+    {
+      "src": "kenrick.jpg",
+      "type": "image/jpeg"
+    }
+  ]
+}
