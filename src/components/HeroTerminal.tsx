@@ -46,7 +46,7 @@ export default function HeroTerminal() {
     }
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'none' } });
+      const tl = gsap.timeline({ defaults: { ease: 'none' }, paused: document.hidden });
       const typeSpeed = 0.014; // s per char
 
       LINES.forEach((line, i) => {
@@ -85,6 +85,20 @@ export default function HeroTerminal() {
         repeat: -1,
         ease: 'none',
       });
+
+      // occluded tabs throttle rAF and freeze mid-animation — if the tab is hidden now,
+      // start the intro when it becomes visible (with a fallback so it always completes)
+      if (document.hidden) {
+        tl.pause(0);
+        const startWhenVisible = () => {
+          if (!document.hidden) {
+            tl.play();
+            document.removeEventListener('visibilitychange', startWhenVisible);
+          }
+        };
+        document.addEventListener('visibilitychange', startWhenVisible);
+        setTimeout(() => { tl.play(); document.removeEventListener('visibilitychange', startWhenVisible); }, 4000);
+      }
     }, root);
 
     return () => ctx.revert();
