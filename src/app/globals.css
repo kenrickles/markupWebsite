@@ -562,15 +562,14 @@ h2 {
 .portrait-frame {
   position: relative;
   max-width: 360px;
-  background: #22271d;
+  background: #2a3340;
   overflow: hidden;
 }
 .portrait-frame img {
   width: 100%;
   height: 440px;
   object-fit: cover;
-  filter: grayscale(1);
-  opacity: 0.88;
+  filter: saturate(1.08) contrast(1.04);
 }
 .portrait-caption {
   position: absolute;
@@ -578,7 +577,7 @@ h2 {
   left: 0;
   width: 100%;
   padding: 16px;
-  background: linear-gradient(transparent, #0a0f07db);
+  background: linear-gradient(transparent, rgba(13,17,23,0.86));
   font-size: 11px;
   color: var(--accent);
 }
@@ -1215,16 +1214,23 @@ html.light {
   color-scheme: light;
 }
 
+/* light-mode terminal: warm paper console, amber-on-ink text */
 html.light .hero-terminal,
-html.light .boot-screen,
-html.light .cmdk {
-  /* consoles stay dark in both themes */
-  background: #0d1117 !important;
-  color: #e8edf2 !important;
-  border-color: #2a3340 !important;
+html.light .terminal-shell {
+  background: #fbf7ef !important;
+  border-color: #e2d9c8 !important;
+  color: #3a3226 !important;
+  box-shadow: 0 30px 80px rgba(22, 32, 44, 0.18) !important;
 }
-html.light .hero-terminal .text-\[color\:var\(--fg\)\],
-html.light .boot-line { color: #e8edf2; }
+html.light .hero-terminal .text-\[color\:var\(--fg\)\] { color: #3a3226 !important; }
+html.light .terminal-shell .text-\[color\:var\(--fg\)\] { color: #3a3226 !important; }
+html.light .terminal-shell input { color: #3a3226 !important; }
+html.light .terminal-shell input::placeholder { color: #9a917e !important; }
+html.light .cmdk { background: #fbf7ef !important; border-color: #e2d9c8 !important; }
+html.light .cmdk-item[data-selected="true"] { background: rgba(196, 127, 23, 0.1) !important; }
+/* status ok/teal slightly darker for light bg */
+html.light .hero-terminal .text-\[\#62d0c3\] { color: #0e8f84 !important; }
+html.light .terminal-shell .text-\[\#62d0c3\] { color: #0e8f84 !important; }
 
 /* smooth theme transition */
 html.theme-anim, html.theme-anim * {

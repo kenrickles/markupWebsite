@@ -255,29 +255,29 @@ export default function TerminalShell({ onClose }: { onClose: () => void }) {
   if (isStatic) return null;
 
   const toneClass: Record<Line['tone'], string> = {
-    cmd: 'text-[#e8edf2]',
+    cmd: 'text-[color:var(--fg)]',
     ok: 'text-[#62d0c3]',
     err: 'text-[#f0605f]',
-    info: 'text-[#97a4b3]',
+    info: 'text-[color:var(--muted)]',
     accent: 'text-[#f0a848]',
   };
 
   return (
     <div className="fixed inset-0 z-[900] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#2a3340] bg-[#0d1117] shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
+        className="terminal-shell flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Interactive terminal"
       >
-        <div className="flex items-center gap-2 border-b border-[#2a3340] px-4 py-3">
+        <div className="flex items-center gap-2 border-b border-[color:var(--border)] px-4 py-3">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-          <span className="ml-3 font-[family-name:var(--font-geist-mono)] text-[10px] uppercase tracking-[0.3em] text-[#97a4b3]">
+          <span className="ml-3 font-[family-name:var(--font-geist-mono)] text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">
             kenrick-shell — interactive
           </span>
-          <button onClick={onClose} aria-label="Close terminal" className="ml-auto text-[#97a4b3] hover:text-[#f0a848]">
+          <button onClick={onClose} aria-label="Close terminal" className="ml-auto text-[color:var(--muted)] hover:text-[#f0a848]">
             ✕
           </button>
         </div>
@@ -287,23 +287,23 @@ export default function TerminalShell({ onClose }: { onClose: () => void }) {
               {l.text}
             </div>
           ))}
-          {waiting && <div className="text-[#97a4b3]">▌</div>}
+          {waiting && <div className="text-[color:var(--muted)]">▌</div>}
         </div>
-        <div className="flex items-center gap-2 border-t border-[#2a3340] px-5 py-3.5 font-[family-name:var(--font-geist-mono)] text-[12.5px]">
+        <div className="flex items-center gap-2 border-t border-[color:var(--border)] px-5 py-3.5 font-[family-name:var(--font-geist-mono)] text-[12.5px]">
           <span className="text-[#f0a848]">$</span>
           <input
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKey}
-            className="flex-1 bg-transparent text-[#e8edf2] caret-[#f0a848] outline-none"
+            className="flex-1 bg-transparent text-[color:var(--fg)] caret-[#f0a848] outline-none"
             spellCheck={false}
             autoCapitalize="off"
             autoComplete="off"
             aria-label="Terminal input"
           />
           <button
-            className="hidden rounded-md border border-[#2a3340] px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-[#97a4b3] hover:border-[#f0a848] hover:text-[#f0a848] sm:block"
+            className="hidden rounded-md border border-[color:var(--border)] px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-[color:var(--muted)] hover:border-[#f0a848] hover:text-[#f0a848] sm:block"
             onClick={() => fileRef.current?.click()}
           >
             resume.pdf

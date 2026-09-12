@@ -21,9 +21,9 @@ const LINES: { text: string; tone: 'cmd' | 'ok' | 'info' | 'warn' }[] = [
 ];
 
 const TONE_CLASS: Record<string, string> = {
-  cmd: 'text-[#e8edf2]',
+  cmd: 'text-[color:var(--fg)]',
   ok: 'text-[#62d0c3]',
-  info: 'text-[#97a4b3]',
+  info: 'text-[color:var(--muted)]',
   warn: 'text-[#f0a848]',
 };
 
@@ -90,7 +90,7 @@ export default function HeroTerminal() {
   return (
     <div
       ref={rootRef}
-      className="hero-terminal relative overflow-hidden rounded-2xl border border-[#2a3340] bg-[#0d1117] p-5 text-[12.5px] leading-6 shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
+      className="hero-terminal relative overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 text-[12.5px] leading-6 shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
       aria-label="Simulated deployment log"
     >
       {/* window chrome */}
@@ -98,7 +98,7 @@ export default function HeroTerminal() {
         <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
         <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
         <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-        <span className="ml-3 text-[10px] uppercase tracking-[0.3em] text-[#97a4b3]">
+        <span className="ml-3 text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">
           kenrick@galaxy — zsh
         </span>
       </div>
