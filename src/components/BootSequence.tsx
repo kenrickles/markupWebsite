@@ -31,16 +31,18 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
   const [progress, setProgress] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const doneRef = useRef(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     if (isStatic) {
       doneRef.current = true;
-      onDone();
+      onDoneRef.current();
       return;
     }
     if (sessionStorage.getItem('booted') === '1') {
       doneRef.current = true;
-      onDone();
+      onDoneRef.current();
       return;
     }
     setVisible(true);
@@ -73,7 +75,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
       setTimeout(() => {
         setVisible(false);
         document.documentElement.style.overflow = '';
-        onDone();
+        onDoneRef.current();
       }, 550);
     }
     finishRef.current = finish;
@@ -85,7 +87,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
       window.removeEventListener('keydown', keySkip);
       document.documentElement.style.overflow = '';
     };
-  }, [isStatic, onDone]);
+  }, [isStatic]);
 
   const root = useRef<HTMLDivElement | null>(null);
   const finishRef = useRef<() => void>(() => {});
