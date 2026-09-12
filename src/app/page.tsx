@@ -6,7 +6,6 @@ import { caseStudies } from "@/lib/caseStudies";
 import SiteNav from "@/components/SiteNav";
 import PortfolioMotion from "@/components/PortfolioMotion";
 import HeroTerminal from "@/components/HeroTerminal";
-import PageGate from "@/components/PageGate";
 import { CountUp } from "@/components/CountUp";
 import TerminalLauncher from "@/components/TerminalLauncher";
 import MagneticCursor from "@/components/MagneticCursor";
@@ -32,7 +31,6 @@ const workLabels = [
 export default function Home() {
   return (
     <>
-      <PageGate>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -439,7 +437,6 @@ export default function Home() {
         <span>Always building. Always learning.</span>
         <a href="#main">Back to top ↑</a>
       </footer>
-          </PageGate>
-    </>
+        </>
   );
 }
