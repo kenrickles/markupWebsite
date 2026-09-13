@@ -19,9 +19,9 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#f5f6f8' },
-      { media: '(prefers-color-scheme: dark)', color: '#0d1117' },
-    ],
+    { media: "(prefers-color-scheme: light)", color: "#f5f6f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d1117" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -135,8 +135,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geist.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geist.variable} ${mono.variable}`}
+    >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=new URLSearchParams(location.search).get('theme');if(t!=='light'&&t!=='dark'){try{t=localStorage.getItem('kenrick-theme')}catch(e){}}if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.classList.toggle('light',t==='light')}catch(e){}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

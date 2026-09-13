@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 const links = [
   ["Work", "projects"],
@@ -72,8 +72,21 @@ export default function SiteNav() {
           </a>
           <button
             className="theme-toggle"
+            aria-label="Open command palette"
+            onClick={() => {
+              setOpen(false);
+              window.dispatchEvent(new Event("open-command-palette"));
+            }}
+          >
+            <Search size={16} />
+          </button>
+          <Link href="/resume/">Résumé</Link>
+          <button
+            className="theme-toggle"
             onClick={toggleTheme}
-            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
             title={theme === "dark" ? "Daylight Ops" : "Ember & Ink"}
           >
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}

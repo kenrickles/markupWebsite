@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStaticMode } from "./useStaticMode";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
@@ -11,22 +11,11 @@ gsap.registerPlugin(ScrollTrigger);
 export default function PortfolioMotion() {
   const pathname = usePathname();
   const isStatic = useStaticMode();
-  const [visible, setVisible] = useState(
-    typeof document === "undefined" ? true : !document.hidden,
-  );
-
-  useEffect(() => {
-    const onVis = () => setVisible(!document.hidden);
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
-
   useEffect(() => {
     if (isStatic) {
       document.documentElement.classList.add("static-mode");
-      return;
+      return () => document.documentElement.classList.remove("static-mode");
     }
-    if (!visible) return; // rAF throttles to zero in hidden tabs — wait until visible
     document.documentElement.classList.remove("static-mode");
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
@@ -62,14 +51,14 @@ export default function PortfolioMotion() {
           scrollTrigger: { trigger: el, start: "top 94%", once: true },
         });
       });
-      gsap.to(".orbit-group", {
+      const orbit = gsap.to(".orbit-group", {
         rotation: 180,
         transformOrigin: "50% 50%",
         duration: 55,
         repeat: -1,
         ease: "none",
       });
-      gsap.to(".orbit-dot", {
+      const dot = gsap.to(".orbit-dot", {
         rotation: 360,
         svgOrigin: "250 250",
         duration: 24,
@@ -77,14 +66,28 @@ export default function PortfolioMotion() {
         ease: "none",
       });
       const refresh = () => ScrollTrigger.refresh();
+      const visibility = () => {
+        orbit.paused(document.hidden);
+        dot.paused(document.hidden);
+      };
+      const modal = () => {
+        if (document.querySelector("dialog[open]")) lenis.stop();
+        else lenis.start();
+      };
+      document.addEventListener("visibilitychange", visibility);
+      window.addEventListener("portfolio-modal", modal);
+      visibility();
+      modal();
       document.addEventListener("toggle", refresh, true);
       return () => {
         document.removeEventListener("toggle", refresh, true);
+        document.removeEventListener("visibilitychange", visibility);
+        window.removeEventListener("portfolio-modal", modal);
         gsap.ticker.remove(tick);
         lenis.destroy();
       };
     });
     return () => media.revert();
-  }, [pathname, isStatic, visible]);
+  }, [pathname, isStatic]);
   return null;
 }

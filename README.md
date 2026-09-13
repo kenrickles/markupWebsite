@@ -1,41 +1,62 @@
 # Kenrick Tan · Portfolio
 
-Next.js App Router portfolio exported as static HTML for GitHub Pages. The redesign retains the four case-study routes and existing career / education content, updates the current role to Galaxy Digital, and adds GSAP + Lenis motion with an adapted React Bits spotlight.
+A static Next.js portfolio for kenrickles.com, with GSAP/Lenis motion, dark and light themes, a command palette, an interactive simulated terminal, case studies, and a printable résumé.
 
-## Development
+## Run locally
+
+Use Node 22 (`nvm use`), then:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-## Verify and build
+## Validate and preview the production export
 
 ```sh
 npm run lint
-npx tsc --noEmit
+npm run typecheck
 npm run build
+npm start
 ```
 
-The production export is in `out/`. The default production base path is `/kenrick-portfolio`. Serve the export under that path to test it; `next start` does not serve static exports. The existing GitHub Pages workflow deploys when changes reach `main`.
+Open http://127.0.0.1:3000. `npm start` serves the static `out/` export; this app does not require a Next.js server. On Netlify or another static host, use `npm run build` and publish `out/`.
 
-For a root-domain deployment, build with:
+The default URL is https://kenrickles.com with no base path. For GitHub Pages project hosting, use matching settings at build and preview time:
 
 ```sh
-NEXT_PUBLIC_BASE_PATH='' NEXT_PUBLIC_SITE_URL=https://kenrickles.com npm run build
+NEXT_PUBLIC_BASE_PATH=/markupWebsite NEXT_PUBLIC_SITE_URL=https://kenrickles.github.io/markupWebsite npm run build
+NEXT_PUBLIC_BASE_PATH=/markupWebsite npm start
 ```
 
-Configure that domain in the intended hosting service separately. Changing build variables alone does not change DNS or replace the current Hugo website.
+This configuration does not change DNS, configure a custom domain, or deploy automatically.
 
-## Content
+## Browser regression checks
 
-- `src/lib/profile.ts`: career, education, credentials.
-- `src/lib/caseStudies.ts`: existing case studies, including their pre-existing outcome claims. These metrics were retained from the repository and were not independently validated as part of the redesign.
-- `src/lib/site.ts`: shared URL and asset-path configuration.
-- `src/app/page.tsx`: homepage narrative and work cards.
+```sh
+npx playwright install chromium
+npm test
+```
 
-## Motion and accessibility
+Build first. Tests start their own preview on port 3100. To test a subpath build, use the same `NEXT_PUBLIC_BASE_PATH` value for `npm test` that was used for the build. The pull-request workflow builds both the root-domain and `/markupWebsite` variants on Node 22. It checks mobile and desktop navigation, asset loading, terminal behavior, theme persistence, blocked storage, reduced motion, keyboard focus, and HTML without JavaScript. Screenshots and traces are uploaded as workflow artifacts.
 
-GSAP coordinates the opening, section movement, and orbital motif. Lenis handles wheel scrolling and anchors on the homepage; native touch scrolling is retained. The shared effect cleans up tickers, listeners, and animations on navigation, and reacts to changes in reduced-motion preferences. Reduced motion skips both GSAP and Lenis. Content is server rendered and visible before enhancement; local Geist fonts remove external font-service requests. Links, mobile navigation, native experience disclosures, and architecture controls support keyboards. The operating-system cursor remains intact.
+## Controls
 
-React Bits SpotlightCard is adapted locally with pointer and focus behavior. See `THIRD_PARTY_NOTICES.md`. Vanta is omitted: the SVG motif delivers the intended identity without a WebGL / Three.js background dependency. Existing Framer Motion remains declared to avoid unrelated dependency churn, but is no longer imported by the rendered pages.
+- Command palette: the navigation search button, Ctrl/Cmd+K, or `/` outside a text field.
+- Terminal: “Open terminal” or Ctrl/Cmd+backtick. It is a local simulation, with no backend, credentials, or real infrastructure access.
+- Terminal commands: `help`, `whoami`, `kubectl get pods`, `theme light`, `theme dark`, `open resume`, `clear`, `exit`.
+- Terminal history uses ↑/↓. Tab completes a nonempty command; Shift+Tab or Tab on an empty field moves focus normally.
+- Résumé: `/resume/`, with Print / Save as PDF using the browser's print dialog.
+- `?static=1` disables decorative animation for review. It does not disable terminal or palette functionality. Reduced-motion changes are also honored during a visit.
+- `?theme=light` or `?theme=dark` previews an appearance. Explicit theme changes are saved if browser storage is available; storage failures do not block the app.
+
+## Content and architecture
+
+- `src/lib/profile.ts`: career, education, and credentials; shared by the homepage and résumé.
+- `src/lib/caseStudies.ts`: existing case-study content and outcome claims, retained from the repository without independent validation.
+- `src/lib/site.ts`: canonical URL and public asset paths.
+- `ThemeProvider`: shared state used by navigation, palette, and terminal. Theme is applied before paint; only explicit user changes write preferences.
+- `Modal`: native dialogs supply focus containment, Escape handling, and background inertness. Scroll locks also suspend Lenis while dialogs are open.
+- `useStaticMode`: live reduced-motion/static-mode subscription. Content is server rendered and remains available without JavaScript.
+
+The site retains the existing Ember & Ink / Daylight Ops design, with corrected shared surface colors, mobile controls, and animation cleanup. React Strict Mode is enabled. Unused boot-gate/cursor implementations and the unused Framer Motion dependency have been removed. React Bits attribution is in `THIRD_PARTY_NOTICES.md`.
