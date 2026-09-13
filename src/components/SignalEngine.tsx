@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { useStaticMode, toggleMotion } from "./useStaticMode";
+import { useStaticMode } from "./useStaticMode";
 
 const routes = [
   "M52 144H146L208 206",
@@ -55,7 +55,7 @@ export default function SignalEngine() {
         0,
       );
       motion.to(
-        ".signal-core",
+        ".signal-eth",
         { y: -9, duration: 2.4, ease: "sine.inOut", repeat: -1, yoyo: true },
         0,
       );
@@ -163,19 +163,25 @@ export default function SignalEngine() {
           opacity=".5"
         />
         <g
-          className="signal-core"
+          className="signal-eth"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinejoin="round"
         >
-          <path d="m250 185 58 33v65l-58 33-58-33v-65Z" fill="var(--surface)" />
-          <path d="m192 218 58 34 58-34M250 252v64M250 185v67" />
+          <path d="m250 143 66 112-66-38-66 38Z" fill="var(--surface)" />
           <path
-            d="m192 218 58-33 58 33-58 34Z"
+            d="m250 143 66 112-66-38Z"
             fill="currentColor"
-            fillOpacity=".15"
+            fillOpacity=".2"
           />
-          <circle cx="250" cy="252" r="5" fill="currentColor" />
+          <path d="m184 270 66 43 66-43-66-39Z" fill="var(--surface)" />
+          <path
+            d="m250 231 66 39-66 43Z"
+            fill="currentColor"
+            fillOpacity=".32"
+          />
+          <path d="M250 143v74M184 270l66 43 66-43" />
+          <circle cx="250" cy="231" r="4" fill="currentColor" />
         </g>
         {[
           [52, 144, "01"],
@@ -218,17 +224,9 @@ export default function SignalEngine() {
           BUILD / SHIP / REFINE
         </text>
       </svg>
-      <div className="signal-controls mono">
+      <div className="signal-footer mono">
         <span>Complexity → clarity</span>
-        <button
-          type="button"
-          onClick={toggleMotion}
-          aria-pressed={!isStatic}
-          aria-label="Animate portfolio"
-        >
-          <span className="motion-indicator" data-playing={!isStatic} />
-          {isStatic ? "Motion off" : "Motion on"}
-        </button>
+        <span aria-hidden="true">ETH / 01</span>
       </div>
     </div>
   );

@@ -224,36 +224,20 @@ test("light theme has no horizontal overflow and exports share metadata", async 
   expect((await request.get(`${baseURL}missing-page/`)).status()).toBe(404);
 });
 
-test("signal engine moves, pauses, resumes and respects device reduction", async ({
+test("signal engine moves and static mode keeps it readable", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("./");
-  const control = page.getByRole("button", { name: "Animate portfolio" });
   const ring = page.locator(".signal-ring-outer");
-  await control.scrollIntoViewIfNeeded();
-  await expect(control).toHaveAttribute("aria-pressed", "true");
   const transform = () => ring.evaluate((el) => getComputedStyle(el).transform);
   const first = await transform();
   await expect.poll(transform).not.toBe(first);
-  await control.click();
-  await expect(control).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator("html")).not.toHaveClass(/lenis/);
-  const stopped = await transform();
-  // Observe a real interval: a paused engine must not merely be between frames.
-  await page.waitForTimeout(400);
-  expect(await transform()).toBe(stopped);
-  await control.click();
-  await expect(control).toHaveAttribute("aria-pressed", "true");
-  await expect.poll(transform).not.toBe(stopped);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(control).toHaveAttribute("aria-pressed", "false");
   await expect(page.locator(".hero-line").first()).toHaveCSS("opacity", "1");
-  // Explicit visitor opt-in is possible even on a reduced-motion device.
-  await control.click();
-  await expect(control).toHaveAttribute("aria-pressed", "true");
-  const optedIn = await transform();
-  await expect.poll(transform).not.toBe(optedIn);
+  await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  await page.goto("./?static=1");
+  await expect(page.locator(".signal-engine")).toContainText("ETH / 01");
 });
 
 test("scroll advances project artwork without hiding project content", async ({

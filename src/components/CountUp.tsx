@@ -45,6 +45,7 @@ export function useCountUp(target: string, duration = 1.6) {
         : fixed;
     };
 
+    let io: IntersectionObserver | undefined;
     const ctx = gsap.context(() => {
       const tween = gsap.fromTo(
         state,
@@ -61,20 +62,22 @@ export function useCountUp(target: string, duration = 1.6) {
       );
 
       // fire when visible (IntersectionObserver is robust to scroll/lenis modes)
-      const io = new IntersectionObserver(
+      io = new IntersectionObserver(
         (entries) => {
           if (entries.some((e) => e.isIntersecting)) {
             tween.play();
-            io.disconnect();
+            io?.disconnect();
           }
         },
         { threshold: 0.4 },
       );
-      io.observe(el);
-      return () => io.disconnect();
+      io?.observe(el);
     }, el);
 
-    return () => ctx.revert();
+    return () => {
+      io?.disconnect();
+      ctx.revert();
+    };
   }, [target, duration, isStatic]);
 
   return ref;

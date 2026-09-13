@@ -1717,15 +1717,11 @@ html.light .terminal-shell .text-\[\#f0605f\] { color: #ba302e; }
 .hero-copy { width: 60%; flex-shrink: 0; }
 .hero h1 { font-size: clamp(3.2rem, 5.6vw, 6rem); }
 .signal-engine { width: 43%; margin-left: -3%; color: var(--accent); flex-shrink: 0; position: relative; }
-.signal-caption, .signal-controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 10px; letter-spacing: .06em; color: var(--muted); }
+.signal-caption, .signal-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 10px; letter-spacing: .06em; color: var(--muted); }
 .signal-caption { padding: 14px 0; border-top: 1px solid var(--border); }
 .signal-canvas { display: block; width: 100%; height: auto; overflow: visible; }
 .signal-guide, .signal-route { stroke: var(--border); stroke-width: 1; }
-.signal-controls { border-bottom: 1px solid var(--border); padding-bottom: 12px; letter-spacing: 0; }
-.signal-controls button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px; color: var(--fg); background: transparent; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font: inherit; }
-.signal-controls button:hover { border-color: var(--accent); }
-.motion-indicator { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
-.motion-indicator[data-playing="true"] { background: var(--accent-2); box-shadow: 0 0 10px color-mix(in srgb, var(--accent-2) 40%, transparent); }
+.signal-footer { border-bottom: 1px solid var(--border); padding-bottom: 12px; letter-spacing: 0; }
 .reading-progress { position: fixed; top: 0; left: 0; width: 100%; height: 2px; z-index: 100; background: var(--accent); transform: scaleX(0); transform-origin: left; pointer-events: none; }
 html.static-mode .reading-progress { display: none; }
 @media (max-width: 1100px) and (min-width: 761px) {
@@ -1738,5 +1734,16 @@ html.static-mode .reading-progress { display: none; }
   .hero-copy { width: 100%; }
   .hero h1 { font-size: clamp(2.6rem, 9.2vw, 4.6rem); }
   .signal-engine { width: min(100%, 440px); margin: 44px auto 16px; }
-  .signal-caption, .signal-controls { font-size: 10px; }
+  .signal-caption, .signal-footer { font-size: 10px; }
+}
+
+@keyframes terminal-caret-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+.terminal-caret { animation: terminal-caret-blink 1.1s steps(1, end) infinite; }
+.hero-terminal__scan { animation: terminal-scan 7s linear infinite; }
+@keyframes terminal-scan {
+  from { background-position: 0 -100%; }
+  to { background-position: 0 200%; }
 }
