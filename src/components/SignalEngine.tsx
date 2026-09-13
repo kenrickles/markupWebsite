@@ -26,7 +26,7 @@ export default function SignalEngine() {
         {
           rotation: 360,
           svgOrigin: "250 250",
-          duration: 22,
+          duration: 9,
           ease: "none",
           repeat: -1,
         },
@@ -37,7 +37,7 @@ export default function SignalEngine() {
         {
           rotation: -360,
           svgOrigin: "250 250",
-          duration: 14,
+          duration: 6,
           ease: "none",
           repeat: -1,
         },
@@ -47,7 +47,7 @@ export default function SignalEngine() {
         ".signal-packet",
         {
           strokeDashoffset: -100,
-          duration: 2.8,
+          duration: 1.8,
           stagger: 0.35,
           ease: "none",
           repeat: -1,
@@ -56,7 +56,7 @@ export default function SignalEngine() {
       );
       motion.to(
         ".signal-eth",
-        { y: -9, duration: 2.4, ease: "sine.inOut", repeat: -1, yoyo: true },
+        { y: -9, duration: 1.6, ease: "sine.inOut", repeat: -1, yoyo: true },
         0,
       );
       motion.to(
@@ -65,7 +65,7 @@ export default function SignalEngine() {
           scale: 1.16,
           opacity: 0.2,
           svgOrigin: "250 250",
-          duration: 2,
+          duration: 1.2,
           ease: "sine.inOut",
           repeat: -1,
           yoyo: true,
