@@ -132,7 +132,9 @@ test("command palette handles empty results, résumé navigation and terminal ha
 }) => {
   await page.goto("./?static=1");
   // wait for hydration: the theme toggle button only responds after client JS attaches
-  await expect(page.locator('button[aria-label="Open command palette"]')).toBeAttached();
+  await expect(
+    page.locator('button[aria-label="Open command palette"]'),
+  ).toBeAttached();
   await expect(
     page.locator('button[aria-label="Open command palette"]'),
   ).toBeEnabled();
@@ -220,4 +222,51 @@ test("light theme has no horizontal overflow and exports share metadata", async 
   });
   expect((await request.get(`${baseURL}sitemap.xml`)).status()).toBe(200);
   expect((await request.get(`${baseURL}missing-page/`)).status()).toBe(404);
+});
+
+test("signal engine moves, pauses, resumes and respects device reduction", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("./");
+  const control = page.getByRole("button", { name: "Animate portfolio" });
+  const ring = page.locator(".signal-ring-outer");
+  await control.scrollIntoViewIfNeeded();
+  await expect(control).toHaveAttribute("aria-pressed", "true");
+  const transform = () => ring.evaluate((el) => getComputedStyle(el).transform);
+  const first = await transform();
+  await expect.poll(transform).not.toBe(first);
+  await control.click();
+  await expect(control).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  const stopped = await transform();
+  // Observe a real interval: a paused engine must not merely be between frames.
+  await page.waitForTimeout(400);
+  expect(await transform()).toBe(stopped);
+  await control.click();
+  await expect(control).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(transform).not.toBe(stopped);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(control).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator(".hero-line").first()).toHaveCSS("opacity", "1");
+  // Explicit visitor opt-in is possible even on a reduced-motion device.
+  await control.click();
+  await expect(control).toHaveAttribute("aria-pressed", "true");
+  const optedIn = await transform();
+  await expect.poll(transform).not.toBe(optedIn);
+});
+
+test("scroll advances project artwork without hiding project content", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("./");
+  await expect(page.locator("html")).toHaveClass(/lenis/);
+  const graphic = page.locator(".work-graphic").first();
+  const transform = () =>
+    graphic.evaluate((el) => getComputedStyle(el).transform);
+  const first = await transform();
+  await graphic.scrollIntoViewIfNeeded();
+  await expect.poll(transform).not.toBe(first);
+  await expect(page.locator(".work-link").first()).toBeVisible();
 });

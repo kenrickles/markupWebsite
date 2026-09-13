@@ -11,7 +11,7 @@ import TerminalLauncher from "@/components/TerminalLauncher";
 import MagneticCursor from "@/components/MagneticCursor";
 import CommandPalette from "@/components/CommandPalette";
 import TiltCard from "@/components/TiltCard";
-import ScrambleText from "@/components/ScrambleText";
+import SignalEngine from "@/components/SignalEngine";
 import SpotlightCard from "@/components/SpotlightCard";
 import { assetPath } from "@/lib/site";
 
@@ -51,7 +51,7 @@ export default function Home() {
               </p>
               <h1 id="hero-title">
                 <span className="hero-line">
-                  <ScrambleText text="Complex systems." duration={1200} />
+                  Complex systems.
                 </span>
                 <span className="hero-line">
                   Clear <em>thinking.</em>
@@ -75,65 +75,7 @@ export default function Home() {
                 <TerminalLauncher />
               </div>
             </div>
-            <div className="system-art" aria-hidden="true">
-              <div className="art-corner corner-a" />
-              <div className="art-corner corner-b" />
-              <span className="art-label mono">SYSTEMS / IN MOTION</span>
-              <svg className="orbital" viewBox="0 0 500 500" fill="none">
-                <defs>
-                  <linearGradient
-                    id="orbit"
-                    x1="0"
-                    y1="0"
-                    x2="500"
-                    y2="500"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop stopColor="#f0a848" />
-                    <stop offset=".55" stopColor="#b3772a" />
-                    <stop offset="1" stopColor="#3d2f14" />
-                  </linearGradient>
-                </defs>
-                <g
-                  className="orbit-group"
-                  stroke="url(#orbit)"
-                  strokeWidth=".9"
-                >
-                  {Array.from({ length: 18 }, (_, i) => (
-                    <ellipse
-                      key={i}
-                      cx="250"
-                      cy="250"
-                      rx="190"
-                      ry="74"
-                      transform={`rotate(${i * 10} 250 250)`}
-                    />
-                  ))}
-                </g>
-                <circle
-                  cx="250"
-                  cy="250"
-                  r="206"
-                  stroke="#3a4654"
-                  strokeDasharray="2 9"
-                />
-                <path
-                  d="M250 20v25M250 455v25M20 250h25M455 250h25"
-                  stroke="#7d8ea0"
-                />
-                <circle
-                  className="orbit-dot"
-                  cx="250"
-                  cy="44"
-                  r="5"
-                  fill="#f0a848"
-                />
-              </svg>
-              <div className="art-bottom mono">
-                <span>BUILD → SHIP → REFINE</span>
-                <span>01—04</span>
-              </div>
-            </div>
+            <SignalEngine />
           </div>
           <div className="hero-footer">
             <span className="mono">
