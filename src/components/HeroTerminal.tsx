@@ -93,8 +93,13 @@ export default function HeroTerminal() {
         if (document.hidden) tl.pause();
         else tl.play();
       };
-      if (document.hidden) tl.pause(0);
-      document.addEventListener('visibilitychange', visSync);
+      if (document.hidden) {
+        tl.pause(0);
+        document.addEventListener('visibilitychange', visSync);
+        // never hold the intro longer than 1.5s — a paused intro reads as broken
+        const visFallback = setTimeout(() => tl.play(), 1500);
+        root.dataset.visFallback = '1';
+      }
 
     }, root);
 
