@@ -34,7 +34,6 @@ export default function HeroTerminal() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const linesRef = useRef<HTMLDivElement[]>([]);
   const cursorRef = useRef<HTMLSpanElement | null>(null);
-  const fallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isStatic = useStaticMode();
 
   useEffect(() => {
@@ -46,6 +45,7 @@ export default function HeroTerminal() {
       return;
     }
 
+    let visSync: (() => void) | null = null;
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'none' }, paused: document.hidden });
       const typeSpeed = 0.014; // s per char
@@ -87,38 +87,19 @@ export default function HeroTerminal() {
         ease: 'none',
       });
 
-      // occluded/background tabs throttle rAF to zero — tweens freeze mid-flight.
-      // Hard fallback: after 6s snap every element to its final state regardless.
-      const finalize = () => {
-        linesRef.current.forEach((el, i) => {
-          if (el) {
-            el.style.opacity = '1';
-            el.textContent = LINES[i]?.text ?? el.textContent;
-          }
-        });
-        const bar = root.querySelector('.hero-terminal__bar-fill') as HTMLElement | null;
-        if (bar) bar.style.width = '100%';
-        const status = root.querySelector('.hero-terminal__status') as HTMLElement | null;
-        if (status) status.style.opacity = '1';
+      // If the tab is hidden (or becomes hidden), pause the intro and resume when visible.
+      // rAF throttling in hidden tabs freezes tweens — pausing keeps them in sync instead.
+      visSync = () => {
+        if (document.hidden) tl.pause();
+        else tl.play();
       };
-      fallbackRef.current = setTimeout(() => {
-        finalize();
-        tl.kill();
-      }, 6000);
-      if (document.hidden) {
-        tl.pause(0);
-        const startWhenVisible = () => {
-          if (!document.hidden) {
-            tl.play();
-            document.removeEventListener('visibilitychange', startWhenVisible);
-          }
-        };
-        document.addEventListener('visibilitychange', startWhenVisible);
-      }
+      if (document.hidden) tl.pause(0);
+      document.addEventListener('visibilitychange', visSync);
+
     }, root);
 
     return () => {
-      if (fallbackRef.current) clearTimeout(fallbackRef.current);
+      if (visSync) document.removeEventListener('visibilitychange', visSync);
       ctx.revert();
     };
   }, [isStatic]);
