@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+import { useStaticMode } from "./useStaticMode";
 
 /**
  * MagneticCursor — C1. A custom cursor that:
@@ -10,31 +11,43 @@ import { useEffect, useRef } from 'react';
  * Desktop pointers only; disabled for touch and reduced motion.
  */
 export default function MagneticCursor() {
+  const isStatic = useStaticMode();
   const dotRef = useRef<HTMLDivElement | null>(null);
   const ringRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (
+      isStatic ||
+      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    )
+      return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    document.body.classList.add('has-magnetic-cursor');
+    document.body.classList.add("has-magnetic-cursor");
 
-    let mx = -100, my = -100;       // raw mouse
-    let dx = -100, dy = -100;       // dot lerp
-    let rx = -100, ry = -100;       // ring lerp (slower)
-    let magnetX = -100, magnetY = -100, magnetR = 0;
+    let mx = -100,
+      my = -100; // raw mouse
+    let dx = -100,
+      dy = -100; // dot lerp
+    let rx = -100,
+      ry = -100; // ring lerp (slower)
+    let magnetX = -100,
+      magnetY = -100,
+      magnetR = 0;
     let raf = 0;
 
     const onMove = (e: MouseEvent) => {
+      dot.style.visibility = "visible";
+      ring.style.visibility = "visible";
       mx = e.clientX;
       my = e.clientY;
 
       // find nearest magnetic element within range
-      const els = document.querySelectorAll<HTMLElement>('[data-magnetic]');
+      const els = document.querySelectorAll<HTMLElement>("[data-magnetic]");
       let best: HTMLElement | null = null;
       let bestDist = 120;
       for (const el of Array.from(els)) {
@@ -52,11 +65,13 @@ export default function MagneticCursor() {
         magnetX = r.left + r.width / 2;
         magnetY = r.top + r.height / 2;
         magnetR = Math.max(r.width, r.height) / 2 + 10;
-        best.classList.add('magnet-active');
-        Array.from(els).forEach((el) => el !== best && el.classList.remove('magnet-active'));
+        best.classList.add("magnet-active");
+        Array.from(els).forEach(
+          (el) => el !== best && el.classList.remove("magnet-active"),
+        );
       } else {
         magnetR = 0;
-        Array.from(els).forEach((el) => el.classList.remove('magnet-active'));
+        Array.from(els).forEach((el) => el.classList.remove("magnet-active"));
       }
     };
 
@@ -75,21 +90,25 @@ export default function MagneticCursor() {
       ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
       ring.style.width = `${ringSize}px`;
       ring.style.height = `${ringSize}px`;
-      ring.style.opacity = magnetR > 0 ? '0.9' : '0.5';
+      ring.style.opacity = magnetR > 0 ? "0.9" : "0.5";
 
       raf = requestAnimationFrame(tick);
     };
 
-    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener("mousemove", onMove, { passive: true });
     raf = requestAnimationFrame(tick);
 
     return () => {
-      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf);
-      document.body.classList.remove('has-magnetic-cursor');
-      document.querySelectorAll('.magnet-active').forEach((el) => el.classList.remove('magnet-active'));
+      dot.style.visibility = "hidden";
+      ring.style.visibility = "hidden";
+      document.body.classList.remove("has-magnetic-cursor");
+      document
+        .querySelectorAll(".magnet-active")
+        .forEach((el) => el.classList.remove("magnet-active"));
     };
-  }, []);
+  }, [isStatic]);
 
   return (
     <>

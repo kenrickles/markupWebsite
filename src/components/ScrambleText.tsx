@@ -1,92 +1,61 @@
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
-
-/**
- * ScrambleText — B4. Text resolves from glitch characters (matrix-decode).
- * Uses setInterval (not rAF) so background/occluded tabs still complete —
- * Chrome throttles rAF to zero for hidden windows, which froze the decode forever.
- */
-const GLYPHS = '!<>-_\\/[]{}—=+*^?#01';
-
+"use client";
+import { useEffect, useRef } from "react";
+import { useStaticMode } from "./useStaticMode";
+const GLYPHS = "!<>-_\\/[]{}=+*^?#01";
 export default function ScrambleText({
   text,
-  className = '',
+  className = "",
   duration = 1400,
 }: {
   text: string;
   className?: string;
   duration?: number;
 }) {
-  const [display, setDisplay] = useState(text);
-  const ref = useRef<HTMLSpanElement | null>(null);
-  const [armed, setArmed] = useState(false);
-
+  const ref = useRef<HTMLSpanElement>(null);
+  const isStatic = useStaticMode();
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const params = new URLSearchParams(window.location.search);
-    if (reduce || params.get('static') === '1') return;
-    const arm = () => {
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            setArmed(true);
-            io.disconnect();
+    const el = ref.current;
+    if (!el || isStatic) return;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        const start = Date.now();
+        timer = setInterval(() => {
+          const progress = Math.min(
+            (Date.now() - start) / Math.max(duration, 1),
+            1,
+          );
+          if (progress === 1 || document.hidden) {
+            el.textContent = text;
+            clearInterval(timer);
+            return;
           }
-        },
-        { threshold: 0.2 },
-      );
-      if (ref.current) io.observe(ref.current);
-    };
-    if (document.visibilityState === 'visible') {
-      arm();
-    } else {
-      // occluded tab: rAF/interval throttling would freeze the decode — show final text,
-      // re-arm only when the tab becomes visible
-      setDisplay(text);
-      const onVis = () => {
-        if (document.visibilityState === 'visible') {
-          document.removeEventListener('visibilitychange', onVis);
-          arm();
-        }
-      };
-      document.addEventListener('visibilitychange', onVis);
-      return () => document.removeEventListener('visibilitychange', onVis);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!armed) return;
-    const start = Date.now();
-    const timer = setInterval(() => {
-      const t = Math.min((Date.now() - start) / duration, 1);
-      if (t >= 1) {
-        setDisplay(text);
-        clearInterval(timer);
-        return;
-      }
-      const settled = Math.floor(t * text.length);
-      let out = '';
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        out += ch === ' ' || i < settled ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-      }
-      setDisplay(out);
-    }, 40);
-    // hard fallback: no matter what, show the final text
-    const fallback = setTimeout(() => {
-      clearInterval(timer);
-      setDisplay(text);
-    }, duration + 600);
+          el.textContent = [...text]
+            .map((char, i) =>
+              char === " " || i < progress * text.length
+                ? char
+                : GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
+            )
+            .join("");
+        }, 40);
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(el);
     return () => {
+      observer.disconnect();
       clearInterval(timer);
-      clearTimeout(fallback);
+      el.textContent = text;
     };
-  }, [armed, text, duration]);
-
+  }, [text, duration, isStatic]);
   return (
-    <span ref={ref} className={className} aria-label={text}>
-      {display}
+    <span className={className}>
+      <span className="sr-only">{text}</span>
+      <span ref={ref} aria-hidden="true">
+        {text}
+      </span>
     </span>
   );
 }

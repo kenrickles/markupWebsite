@@ -1,11 +1,10 @@
-'use client';
-
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Copy,
-  Download,
+  FileText,
   Github,
   Linkedin,
   Mail,
@@ -14,180 +13,174 @@ import {
   Send,
   Sun,
   TerminalSquare,
-} from 'lucide-react';
-import { useTheme } from './ThemeProvider';
-
-/**
- * CommandPalette — C4. ⌘K / Ctrl+K opens it. "/" works outside inputs.
- * Sections jump, theme toggle, social links, copy email, terminal.
- * Arrow keys + Enter, Esc to close. Filter-as-you-type.
- */
+  X,
+} from "lucide-react";
+import { useTheme } from "./ThemeProvider";
+import Modal from "./Modal";
 
 type Item = {
   id: string;
   label: string;
   hint?: string;
   icon: React.ReactNode;
-  keywords?: string;
-  perform: (ctx: { toggleTheme: () => void; copyEmail: () => void }) => void;
+  run: () => void;
 };
-
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
-  const [sel, setSel] = useState(0);
-  const [toast, setToast] = useState('');
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const { toggle: toggleTheme, theme } = useTheme();
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState(0);
+  const [toast, setToast] = useState("");
+  const list = useRef<HTMLDivElement>(null);
+  const { theme, toggle } = useTheme();
   const router = useRouter();
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 1800);
-  };
-
-  const items: Item[] = useMemo(() => {
-    const jump = (id: string, label: string): Item => ({
-      id: `go-${id}`,
-      label,
-      hint: 'section',
-      icon: <ArrowUpRight size={15} />,
-      perform: () => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      },
-    });
-    const external = (id: string, label: string, url: string, icon: React.ReactNode): Item => ({
-      id,
-      label,
-      hint: 'link',
-      icon,
-      perform: () => window.open(url, '_blank'),
-    });
-    return [
-      jump('projects', 'Go to Work'),
-      jump('about', 'Go to About'),
-      jump('experience', 'Go to Experience'),
-      jump('education', 'Go to Education'),
-      jump('contact', 'Go to Contact'),
-      {
-        id: 'terminal',
-        label: 'Open terminal',
-        hint: '⌘`',
-        icon: <TerminalSquare size={15} />,
-        keywords: 'shell cli kubectl',
-        perform: () => {
-          window.dispatchEvent(new CustomEvent('open-terminal'));
-        },
-      },
-      {
-        id: 'theme',
-        label: theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-        hint: theme,
-        icon: theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />,
-        keywords: 'theme daylight ember appearance',
-        perform: ({ toggleTheme }) => toggleTheme(),
-      },
-      {
-        id: 'copy-email',
-        label: 'Copy email address',
-        hint: 'kenrickles@gmail.com',
-        icon: <Copy size={15} />,
-        keywords: 'mail contact',
-        perform: ({ copyEmail }) => copyEmail(),
-      },
-      external('github', 'GitHub — kenrickles', 'https://github.com/kenrickles', <Github size={15} />),
-      external('linkedin', 'LinkedIn — kenrick-tan', 'https://linkedin.com/in/kenrick-tan', <Linkedin size={15} />),
-      external('telegram', 'Telegram — kenrickles', 'https://t.me/kenrickles', <Send size={15} />),
-      {
-        id: 'email',
-        label: 'Compose email',
-        hint: 'mailto',
-        icon: <Mail size={15} />,
-        perform: () => {
-          window.location.href = 'mailto:kenrickles@gmail.com';
-        },
-      },
-      {
-        id: 'download',
-        label: 'Download resume',
-        hint: 'pdf',
-        icon: <Download size={15} />,
-        keywords: 'cv resume',
-        perform: () => showToast('Resume download would go here — wire to /resume.pdf'),
-      },
-    ];
-  }, [theme, toggleTheme, router]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(
-      (it) =>
-        it.label.toLowerCase().includes(q) ||
-        (it.keywords ?? '').toLowerCase().includes(q) ||
-        (it.hint ?? '').toLowerCase().includes(q),
-    );
-  }, [items, query]);
-
-  // open/close + shortcuts
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const inInput = ['INPUT', 'TEXTAREA'].includes(
-        (e.target as HTMLElement)?.tagName,
+    const show = () => {
+      setQuery("");
+      setSelected(0);
+      setOpen(true);
+    };
+    const key = (event: KeyboardEvent) => {
+      const editing = (event.target as HTMLElement)?.closest(
+        'input,textarea,select,[contenteditable="true"]',
       );
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setOpen((o) => !o);
-      } else if (e.key === '/' && !inInput) {
-        e.preventDefault();
-        setOpen(true);
-      } else if (e.key === 'Escape') {
-        setOpen(false);
+      const anotherModal = document.querySelector(
+        'dialog[open]:not([aria-label="Command palette"])',
+      );
+      if (anotherModal) return;
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        if (
+          document.querySelector('dialog[aria-label="Command palette"][open]')
+        )
+          setOpen(false);
+        else show();
+      } else if (
+        event.key === "/" &&
+        !editing &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey
+      ) {
+        event.preventDefault();
+        show();
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", key);
+    window.addEventListener("open-command-palette", show);
+    return () => {
+      window.removeEventListener("keydown", key);
+      window.removeEventListener("open-command-palette", show);
+    };
   }, []);
-
-  // focus + reset on open
+  function notify(message: string) {
+    setToast(message);
+  }
   useEffect(() => {
-    if (open) {
-      setQuery('');
-      setSel(0);
-      setTimeout(() => inputRef.current?.focus(), 30);
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(""), 2400);
+    return () => clearTimeout(timer);
+  }, [toast]);
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText("kenrickles@gmail.com");
+      notify("Email copied to clipboard");
+    } catch {
+      notify("Could not copy. Email: kenrickles@gmail.com");
     }
-  }, [open]);
-
-  // keep selection in view
+  }
+  const jump = (id: string, label: string): Item => ({
+    id,
+    label: `Go to ${label}`,
+    icon: <ArrowUpRight size={16} />,
+    run: () => router.push(`/#${id}`),
+  });
+  const external = (
+    id: string,
+    label: string,
+    url: string,
+    icon: React.ReactNode,
+  ): Item => ({
+    id,
+    label,
+    icon,
+    run: () => window.open(url, "_blank", "noopener,noreferrer"),
+  });
+  const items: Item[] = [
+    jump("projects", "Work"),
+    jump("about", "About"),
+    jump("experience", "Experience"),
+    jump("education", "Education"),
+    jump("contact", "Contact"),
+    {
+      id: "terminal",
+      label: "Open terminal",
+      hint: "shell cli kubectl",
+      icon: <TerminalSquare size={16} />,
+      run: () => window.dispatchEvent(new Event("open-terminal")),
+    },
+    {
+      id: "theme",
+      label: theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+      hint: "theme appearance",
+      icon: theme === "dark" ? <Sun size={16} /> : <Moon size={16} />,
+      run: toggle,
+    },
+    {
+      id: "copy-email",
+      label: "Copy email address",
+      hint: "kenrickles@gmail.com",
+      icon: <Copy size={16} />,
+      run: copyEmail,
+    },
+    external(
+      "github",
+      "GitHub — kenrickles",
+      "https://github.com/kenrickles",
+      <Github size={16} />,
+    ),
+    external(
+      "linkedin",
+      "LinkedIn — kenrick-tan",
+      "https://linkedin.com/in/kenrick-tan",
+      <Linkedin size={16} />,
+    ),
+    external(
+      "telegram",
+      "Telegram — kenrickles",
+      "https://t.me/kenrickles",
+      <Send size={16} />,
+    ),
+    {
+      id: "email",
+      label: "Compose email",
+      icon: <Mail size={16} />,
+      run: () => {
+        window.location.href = "mailto:kenrickles@gmail.com";
+      },
+    },
+    {
+      id: "resume",
+      label: "View printable résumé",
+      hint: "cv resume pdf",
+      icon: <FileText size={16} />,
+      run: () => router.push("/resume/"),
+    },
+  ];
+  const filtered = items.filter((item) =>
+    `${item.label} ${item.hint ?? ""}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
+  );
+  const index = Math.min(selected, Math.max(filtered.length - 1, 0));
   useEffect(() => {
-    const el = listRef.current?.querySelector('[data-selected="true"]');
-    el?.scrollIntoView({ block: 'nearest' });
-  }, [sel, filtered.length]);
-
-  const copyEmail = () => {
-    navigator.clipboard?.writeText('kenrickles@gmail.com');
-    showToast('Email copied to clipboard');
-  };
-
-  const run = (item: Item) => {
+    list.current
+      ?.querySelector('[data-selected="true"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selected, query]);
+  function run(item: Item) {
     setOpen(false);
-    item.perform({ toggleTheme, copyEmail });
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSel((s) => Math.min(s + 1, filtered.length - 1));
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSel((s) => Math.max(s - 1, 0));
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (filtered[sel]) run(filtered[sel]);
-    }
-  };
-
+    item.run();
+  }
   return (
     <>
       {toast && (
@@ -196,66 +189,87 @@ export default function CommandPalette() {
         </div>
       )}
       {open && (
-        <div
-          className="cmdk-overlay"
-          onClick={() => setOpen(false)}
-          role="presentation"
-        >
-          <div
-            className="cmdk"
-            role="dialog"
-            aria-label="Command palette"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <Modal label="Command palette" onClose={() => setOpen(false)}>
+          <div className="cmdk">
             <div className="cmdk-search-row">
-              <Search size={16} className="cmdk-search-icon" />
+              <Search size={16} />
               <input
-                ref={inputRef}
+                autoFocus
+                role="combobox"
+                aria-label="Command palette search"
+                aria-expanded="true"
+                aria-controls="command-results"
+                aria-autocomplete="list"
+                aria-activedescendant={
+                  filtered[index] ? `command-${filtered[index].id}` : undefined
+                }
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  setSel(0);
+                  setSelected(0);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setSelected(
+                      Math.min(index + 1, Math.max(filtered.length - 1, 0)),
+                    );
+                  }
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setSelected(Math.max(index - 1, 0));
+                  }
+                  if (e.key === "Enter" && filtered[index]) {
+                    e.preventDefault();
+                    run(filtered[index]);
+                  }
+                }}
                 placeholder="Type a command or search…"
-                aria-label="Command palette search"
                 spellCheck={false}
               />
-              <kbd>esc</kbd>
+              <button
+                className="dialog-close"
+                aria-label="Close command palette"
+                onClick={() => setOpen(false)}
+              >
+                <X size={18} />
+              </button>
             </div>
-            <div className="cmdk-list" ref={listRef} role="listbox">
+            <div
+              className="cmdk-list"
+              id="command-results"
+              role="listbox"
+              aria-label="Commands"
+              ref={list}
+            >
               {filtered.length === 0 && (
-                <div className="cmdk-empty">No matching commands</div>
+                <div className="cmdk-empty" role="status">
+                  No matching commands
+                </div>
               )}
               {filtered.map((item, i) => (
-                <button
+                <div
+                  id={`command-${item.id}`}
                   key={item.id}
-                  data-selected={i === sel}
-                  className="cmdk-item"
                   role="option"
-                  aria-selected={i === sel}
-                  onMouseEnter={() => setSel(i)}
+                  aria-selected={i === index}
+                  data-selected={i === index}
+                  className="cmdk-item"
+                  onMouseEnter={() => setSelected(i)}
                   onClick={() => run(item)}
                 >
                   <span className="cmdk-item-icon">{item.icon}</span>
                   <span className="cmdk-item-label">{item.label}</span>
-                  {item.hint && <span className="cmdk-item-hint">{item.hint}</span>}
-                </button>
+                </div>
               ))}
             </div>
             <div className="cmdk-footer">
-              <span>
-                <kbd>↑↓</kbd> navigate
-              </span>
-              <span>
-                <kbd>↵</kbd> select
-              </span>
-              <span>
-                <kbd>esc</kbd> close
-              </span>
+              <span>↑↓ navigate</span>
+              <span>↵ select</span>
+              <span>esc close</span>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </>
   );

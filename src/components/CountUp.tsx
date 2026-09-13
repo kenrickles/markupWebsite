@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { useStaticMode } from './useStaticMode';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { useStaticMode } from "./useStaticMode";
 
 /**
  * useCountUp — animates a numeric metric from 0 to its target value
@@ -30,8 +30,8 @@ export function useCountUp(target: string, duration = 1.6) {
       return;
     }
     const [, prefix, numeric, suffix] = match;
-    const decimals = (numeric.split('.')[1] || '').length;
-    const end = parseFloat(numeric.replace(/,/g, ''));
+    const decimals = (numeric.split(".")[1] || "").length;
+    const end = parseFloat(numeric.replace(/,/g, ""));
     if (Number.isNaN(end)) {
       el.textContent = target;
       return;
@@ -40,7 +40,9 @@ export function useCountUp(target: string, duration = 1.6) {
     const state = { v: 0 };
     const fmt = (v: number) => {
       const fixed = v.toFixed(decimals);
-      return numeric.includes(',') ? Number(fixed).toLocaleString('en-US') : fixed;
+      return numeric.includes(",")
+        ? Number(fixed).toLocaleString("en-US")
+        : fixed;
     };
 
     const ctx = gsap.context(() => {
@@ -50,7 +52,7 @@ export function useCountUp(target: string, duration = 1.6) {
         {
           v: end,
           duration,
-          ease: 'power2.out',
+          ease: "power2.out",
           paused: true,
           onUpdate: () => {
             el.textContent = `${prefix}${fmt(state.v)}${suffix}`;
@@ -79,12 +81,17 @@ export function useCountUp(target: string, duration = 1.6) {
 }
 
 /** Metric — drop-in count-up stat */
-export function CountUp({ value, className }: { value: string; className?: string }) {
+export function CountUp({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) {
   const ref = useCountUp(value);
-  const isStatic = useStaticMode();
   return (
     <span ref={ref} className={className}>
-      {isStatic ? value : '0'}
+      {value}
     </span>
   );
 }

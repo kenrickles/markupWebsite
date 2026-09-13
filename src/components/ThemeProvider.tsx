@@ -1,49 +1,75 @@
-'use client';
+"use client";
+import { createContext, useContext, useSyncExternalStore } from "react";
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-
-type Theme = 'dark' | 'light';
-
-const ThemeCtx = createContext<{
-  theme: Theme;
-  toggle: () => void;
-}>({ theme: 'dark', toggle: () => {} });
-
+type Theme = "dark" | "light";
+const KEY = "kenrick-theme";
+function apply(theme: Theme) {
+  document.documentElement.classList.toggle("light", theme === "light");
+}
+function preference(): Theme {
+  const forced = new URLSearchParams(window.location.search).get("theme");
+  if (forced === "light" || forced === "dark") return forced;
+  try {
+    const stored = localStorage.getItem(KEY);
+    if (stored === "light" || stored === "dark") return stored;
+  } catch {
+    /* Storage is optional. */
+  }
+  return window.matchMedia("(prefers-color-scheme: light)").matches
+    ? "light"
+    : "dark";
+}
+function subscribe(callback: () => void) {
+  const media = window.matchMedia("(prefers-color-scheme: light)");
+  const update = () => {
+    apply(preference());
+    callback();
+  };
+  const storage = (event: StorageEvent) => {
+    if (event.key === KEY || event.key === null) update();
+  };
+  update();
+  window.addEventListener("portfolio-theme", callback);
+  window.addEventListener("storage", storage);
+  media.addEventListener("change", update);
+  return () => {
+    window.removeEventListener("portfolio-theme", callback);
+    window.removeEventListener("storage", storage);
+    media.removeEventListener("change", update);
+  };
+}
+function setTheme(theme: Theme) {
+  apply(theme);
+  try {
+    localStorage.setItem(KEY, theme);
+  } catch {
+    /* Still usable in memory. */
+  }
+  window.dispatchEvent(new Event("portfolio-theme"));
+}
+function snapshot(): Theme {
+  return document.documentElement.classList.contains("light")
+    ? "light"
+    : "dark";
+}
+function toggle() {
+  setTheme(snapshot() === "dark" ? "light" : "dark");
+}
+const ThemeCtx = createContext({ theme: "dark" as Theme, toggle, setTheme });
 export const useTheme = () => useContext(ThemeCtx);
-
-const STORAGE_KEY = 'kenrick-theme';
-
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const forced = params.get('theme');
-    if (forced === 'light' || forced === 'dark') {
-      setTheme(forced);
-      return;
-    }
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === 'light' || stored === 'dark') {
-      setTheme(stored);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      setTheme('light');
-    }
-  }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle('light', theme === 'light');
-    root.classList.add('theme-anim');
-    const t = setTimeout(() => root.classList.remove('theme-anim'), 500);
-    localStorage.setItem(STORAGE_KEY, theme);
-    return () => clearTimeout(t);
-  }, [theme]);
-
-  const toggle = useCallback(
-    () => setTheme((t) => (t === 'dark' ? 'light' : 'dark')),
-    [],
+export default function ThemeProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const theme = useSyncExternalStore(
+    subscribe,
+    snapshot,
+    () => "dark" as Theme,
   );
-
-  return <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>;
+  return (
+    <ThemeCtx.Provider value={{ theme, toggle, setTheme }}>
+      {children}
+    </ThemeCtx.Provider>
+  );
 }
