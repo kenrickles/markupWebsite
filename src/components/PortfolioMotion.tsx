@@ -8,6 +8,9 @@ import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 
 gsap.registerPlugin(ScrollTrigger);
+// Share real elapsed time with Lenis. The default 500ms/33ms lag smoothing
+// turns throttled frames into slow motion across EVERY GSAP animation.
+gsap.ticker.lagSmoothing(0);
 export default function PortfolioMotion() {
   const pathname = usePathname();
   const isStatic = useStaticMode();
