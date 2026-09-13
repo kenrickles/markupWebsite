@@ -73,10 +73,17 @@ export default function SignalEngine() {
         0,
       );
     }, el);
-    const sync = () =>
+    const sync = () => {
+      const rect = el.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      // IntersectionObserver can report a stale false value after a tab switch
+      // or responsive reflow. Geometry keeps an on-screen engine running.
       motion.paused(
-        !inView || document.hidden || !!document.querySelector("dialog[open]"),
+        (!inView && !visible) ||
+          document.hidden ||
+          !!document.querySelector("dialog[open]"),
       );
+    };
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting;
       sync();
