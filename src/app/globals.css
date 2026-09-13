@@ -1698,3 +1698,16 @@ html.light .hero-terminal .text-\[\#f0a848\], html.light .hero-terminal__status 
 html.light .hero-terminal .text-\[\#62d0c3\], html.light .terminal-shell .text-\[\#62d0c3\] { color: var(--accent-2) !important; }
 html.light .terminal-shell .text-\[\#f0a848\] { color: var(--accent); }
 html.light .terminal-shell .text-\[\#f0605f\] { color: #ba302e; }
+
+/* ---- accessibility: screen-reader-only (ScrambleText dual-span pattern) ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

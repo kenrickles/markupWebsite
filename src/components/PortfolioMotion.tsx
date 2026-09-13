@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStaticMode } from "./useStaticMode";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
@@ -11,6 +11,17 @@ gsap.registerPlugin(ScrollTrigger);
 export default function PortfolioMotion() {
   const pathname = usePathname();
   const isStatic = useStaticMode();
+  // Re-run animation setup when the tab becomes visible: occluded tabs throttle rAF to
+  // zero, so gsap.from() tweens created while hidden would freeze at opacity 0 forever.
+  const [visibleTick, setVisibleTick] = useState(0);
+  useEffect(() => {
+    const onVis = () => {
+      if (!document.hidden) setVisibleTick((n) => n + 1);
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
   useEffect(() => {
     if (isStatic) {
       document.documentElement.classList.add("static-mode");
@@ -19,6 +30,12 @@ export default function PortfolioMotion() {
     document.documentElement.classList.remove("static-mode");
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
+      // Hidden at setup (rAF throttled): gsap.from() would freeze at opacity 0 forever.
+      // Render final states now; the visibleTick re-run handles a later visibility change.
+      if (document.hidden) {
+        gsap.set(".hero-line, .hero-enter, .reveal", { opacity: 1, y: 0 });
+        return;
+      }
       const lenis = new Lenis({
         duration: 1.05,
         smoothWheel: true,
@@ -88,6 +105,6 @@ export default function PortfolioMotion() {
       };
     });
     return () => media.revert();
-  }, [pathname, isStatic]);
+  }, [pathname, isStatic, visibleTick]);
   return null;
 }

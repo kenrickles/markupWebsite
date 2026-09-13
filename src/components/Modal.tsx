@@ -17,6 +17,9 @@ export default function Modal({
     if (!dialog) return;
     const previous = document.activeElement as HTMLElement | null;
     dialog.showModal();
+    // showModal focuses the dialog itself/first element; honor an explicit autofocus child
+    const autofocusEl = dialog.querySelector<HTMLElement>("[autofocus]");
+    autofocusEl?.focus({ preventScroll: true });
     window.dispatchEvent(new Event("portfolio-modal"));
     return () => {
       dialog.close();

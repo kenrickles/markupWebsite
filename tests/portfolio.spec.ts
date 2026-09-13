@@ -131,6 +131,12 @@ test("command palette handles empty results, résumé navigation and terminal ha
   page,
 }) => {
   await page.goto("./?static=1");
+  // wait for hydration: the theme toggle button only responds after client JS attaches
+  await expect(page.locator('button[aria-label="Open command palette"]')).toBeAttached();
+  await expect(
+    page.locator('button[aria-label="Open command palette"]'),
+  ).toBeEnabled();
+  await page.waitForTimeout(300);
   await page.keyboard.press("Control+k");
   const palette = page.getByRole("dialog", { name: "Command palette" });
   await expect(palette).toBeVisible();

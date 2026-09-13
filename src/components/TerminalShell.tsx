@@ -287,6 +287,12 @@ export default function TerminalShell({ onClose }: { onClose: () => void }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [lines]);
 
+  // native <dialog> focuses its first focusable child (the close button) on showModal —
+  // steal focus to the input so users can type immediately
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
   const run = (raw: string) => {
     const cmdline = raw.trim();
     if (!cmdline) return;
