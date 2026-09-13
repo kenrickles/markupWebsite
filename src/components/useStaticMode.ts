@@ -16,7 +16,7 @@ function snapshot() {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
-/** Skip animation, never functionality. Also reacts to OS preference changes. */
+/** Skip animation, never functionality. Server and no-JS render remain readable. */
 export function useStaticMode() {
   return useSyncExternalStore(subscribe, snapshot, () => true);
 }

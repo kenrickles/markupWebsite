@@ -80,7 +80,11 @@ export default function HeroTerminal() {
       );
     }, root);
     const sync = () => {
-      if (inView && !document.hidden) timeline.play();
+      const rect = root.getBoundingClientRect();
+      const visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      // TextPlugin changes line wrapping while it types. Use geometry as a
+      // fallback so an observer update during reflow cannot freeze the log.
+      if ((inView || visible) && !document.hidden) timeline.play();
       else timeline.pause();
     };
     const observer = new IntersectionObserver((entries) => {

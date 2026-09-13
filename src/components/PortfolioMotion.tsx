@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStaticMode } from "./useStaticMode";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
@@ -8,103 +8,98 @@ import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 
 gsap.registerPlugin(ScrollTrigger);
+// Share real elapsed time with Lenis. The default 500ms/33ms lag smoothing
+// turns throttled frames into slow motion across EVERY GSAP animation.
+gsap.ticker.lagSmoothing(0);
 export default function PortfolioMotion() {
   const pathname = usePathname();
   const isStatic = useStaticMode();
-  // Re-run animation setup when the tab becomes visible: occluded tabs throttle rAF to
-  // zero, so gsap.from() tweens created while hidden would freeze at opacity 0 forever.
-  const [visibleTick, setVisibleTick] = useState(0);
   useEffect(() => {
-    const onVis = () => {
-      if (!document.hidden) setVisibleTick((n) => n + 1);
-    };
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
-
-  useEffect(() => {
-    if (isStatic) {
-      document.documentElement.classList.add("static-mode");
+    document.documentElement.classList.toggle("static-mode", isStatic);
+    if (isStatic)
       return () => document.documentElement.classList.remove("static-mode");
-    }
-    document.documentElement.classList.remove("static-mode");
-    const media = gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      // Hidden at setup (rAF throttled): gsap.from() would freeze at opacity 0 forever.
-      // Render final states now; the visibleTick re-run handles a later visibility change.
-      if (document.hidden) {
-        gsap.set(".hero-line, .hero-enter, .reveal", { opacity: 1, y: 0 });
-        return;
+    const lenis = new Lenis({
+      duration: 1.05,
+      smoothWheel: true,
+      syncTouch: false,
+      anchors: { offset: -88 },
+    });
+    const tick = (time: number) => lenis.raf(time * 1000);
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(tick);
+    const ctx = gsap.context(() => {
+      // Animate only position: even a throttled/occluded tab never hides content.
+      if (!document.hidden) {
+        gsap.from(".hero-line", {
+          y: 42,
+          duration: 1.1,
+          stagger: 0.14,
+          ease: "power3.out",
+        });
+        gsap.from(".hero-enter", {
+          y: 20,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out",
+        });
       }
-      const lenis = new Lenis({
-        duration: 1.05,
-        smoothWheel: true,
-        syncTouch: false,
-        anchors: { offset: -88 },
-      });
-      const tick = (time: number) => lenis.raf(time * 1000);
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add(tick);
-      gsap.from(".hero-line", {
-        y: 52,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.13,
-        ease: "power3.out",
-      });
-      gsap.from(".hero-enter", {
-        y: 18,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        delay: 0.2,
-      });
       gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
-        // Keep deep-linked / already-visible content readable before the enhancement runs.
         gsap.from(el, {
-          y: 28,
-          duration: 0.85,
-          ease: "power2.out",
-          scrollTrigger: { trigger: el, start: "top 94%", once: true },
+          y: 56,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 96%", once: true },
         });
       });
-      const orbit = gsap.to(".orbit-group", {
-        rotation: 180,
-        transformOrigin: "50% 50%",
-        duration: 55,
-        repeat: -1,
-        ease: "none",
+      gsap.utils.toArray<HTMLElement>(".work-graphic").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: 24, scale: 0.9, rotation: i % 2 ? 3 : -3 },
+          {
+            y: -18,
+            scale: 1.04,
+            rotation: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el.closest(".work-card"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.6,
+            },
+          },
+        );
       });
-      const dot = gsap.to(".orbit-dot", {
-        rotation: 360,
-        svgOrigin: "250 250",
-        duration: 24,
-        repeat: -1,
-        ease: "none",
-      });
-      const refresh = () => ScrollTrigger.refresh();
-      const visibility = () => {
-        orbit.paused(document.hidden);
-        dot.paused(document.hidden);
-      };
-      const modal = () => {
-        if (document.querySelector("dialog[open]")) lenis.stop();
-        else lenis.start();
-      };
-      document.addEventListener("visibilitychange", visibility);
-      window.addEventListener("portfolio-modal", modal);
-      visibility();
-      modal();
-      document.addEventListener("toggle", refresh, true);
-      return () => {
-        document.removeEventListener("toggle", refresh, true);
-        document.removeEventListener("visibilitychange", visibility);
-        window.removeEventListener("portfolio-modal", modal);
-        gsap.ticker.remove(tick);
-        lenis.destroy();
-      };
+      gsap.fromTo(
+        ".reading-progress",
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: { start: 0, end: "max", scrub: 0.2 },
+        },
+      );
     });
-    return () => media.revert();
-  }, [pathname, isStatic, visibleTick]);
-  return null;
+    const refresh = () => ScrollTrigger.refresh();
+    const sync = () => {
+      if (document.hidden || document.querySelector("dialog[open]"))
+        lenis.stop();
+      else {
+        lenis.start();
+        ScrollTrigger.refresh();
+      }
+    };
+    document.addEventListener("visibilitychange", sync);
+    window.addEventListener("portfolio-modal", sync);
+    document.addEventListener("toggle", refresh, true);
+    sync();
+    return () => {
+      document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("portfolio-modal", sync);
+      document.removeEventListener("toggle", refresh, true);
+      gsap.ticker.remove(tick);
+      ctx.revert();
+      lenis.destroy();
+    };
+  }, [pathname, isStatic]);
+  return <div className="reading-progress" aria-hidden="true" />;
 }

@@ -1,5 +1,55 @@
 import { test, expect } from "@playwright/test";
 
+test("animations keep elapsed time when browser frames are throttled", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  // Model occlusion/low frame delivery, not slow network or disabled motion.
+  // The old GSAP clock advanced only 33ms for each of these 600ms frames.
+  await page.addInitScript(() => {
+    window.requestAnimationFrame = (callback) =>
+      window.setTimeout(() => callback(performance.now()), 600);
+    window.cancelAnimationFrame = (id) => window.clearTimeout(id);
+  });
+  await page.goto("./");
+  await expect(page.locator("html")).toHaveClass(/lenis/);
+  const heroY = () =>
+    page
+      .locator(".hero-line")
+      .first()
+      .evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
+  await expect.poll(heroY, { timeout: 4000 }).toBe(0);
+  const ring = page.locator(".signal-ring-outer");
+  await ring.scrollIntoViewIfNeeded();
+  const angle = () =>
+    ring.evaluate((el) => {
+      const m = new DOMMatrix(getComputedStyle(el).transform);
+      return (Math.atan2(m.b, m.a) * 180) / Math.PI;
+    });
+  const before = await angle();
+  await page.waitForTimeout(1400);
+  const delta = ((await angle()) - before + 360) % 360;
+  expect(delta).toBeGreaterThan(20);
+
+  await page.locator(".hero-terminal").scrollIntoViewIfNeeded();
+  await expect(page.locator(".hero-terminal")).toContainText(
+    "complex systems, shipped calmly_",
+    { timeout: 10000 },
+  );
+  await expect(page.locator(".hero-terminal__bar-fill")).toHaveAttribute(
+    "style",
+    /width: 100%/,
+    { timeout: 2500 },
+  );
+  await page.locator(".about-facts").scrollIntoViewIfNeeded();
+  await expect(page.locator(".about-facts strong").first()).toHaveText("40+", {
+    timeout: 4000,
+  });
+  await expect(page.locator(".about-facts strong").last()).toHaveText("250", {
+    timeout: 4000,
+  });
+});
+
 test("export renders, navigates and exposes case-study interactions", async ({
   page,
 }, testInfo) => {
@@ -132,7 +182,9 @@ test("command palette handles empty results, résumé navigation and terminal ha
 }) => {
   await page.goto("./?static=1");
   // wait for hydration: the theme toggle button only responds after client JS attaches
-  await expect(page.locator('button[aria-label="Open command palette"]')).toBeAttached();
+  await expect(
+    page.locator('button[aria-label="Open command palette"]'),
+  ).toBeAttached();
   await expect(
     page.locator('button[aria-label="Open command palette"]'),
   ).toBeEnabled();
@@ -220,4 +272,35 @@ test("light theme has no horizontal overflow and exports share metadata", async 
   });
   expect((await request.get(`${baseURL}sitemap.xml`)).status()).toBe(200);
   expect((await request.get(`${baseURL}missing-page/`)).status()).toBe(404);
+});
+
+test("signal engine moves and static mode keeps it readable", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("./");
+  const ring = page.locator(".signal-ring-outer");
+  const transform = () => ring.evaluate((el) => getComputedStyle(el).transform);
+  const first = await transform();
+  await expect.poll(transform).not.toBe(first);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(".hero-line").first()).toHaveCSS("opacity", "1");
+  await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  await page.goto("./?static=1");
+  await expect(page.locator(".signal-engine")).toContainText("ETH / 01");
+});
+
+test("scroll advances project artwork without hiding project content", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("./");
+  await expect(page.locator("html")).toHaveClass(/lenis/);
+  const graphic = page.locator(".work-graphic").first();
+  const transform = () =>
+    graphic.evaluate((el) => getComputedStyle(el).transform);
+  const first = await transform();
+  await graphic.scrollIntoViewIfNeeded();
+  await expect.poll(transform).not.toBe(first);
+  await expect(page.locator(".work-link").first()).toBeVisible();
 });
