@@ -26,17 +26,33 @@ export default function ScrambleText({
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const params = new URLSearchParams(window.location.search);
     if (reduce || params.get('static') === '1') return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setArmed(true);
-          io.disconnect();
+    const arm = () => {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setArmed(true);
+            io.disconnect();
+          }
+        },
+        { threshold: 0.2 },
+      );
+      if (ref.current) io.observe(ref.current);
+    };
+    if (document.visibilityState === 'visible') {
+      arm();
+    } else {
+      // occluded tab: rAF/interval throttling would freeze the decode — show final text,
+      // re-arm only when the tab becomes visible
+      setDisplay(text);
+      const onVis = () => {
+        if (document.visibilityState === 'visible') {
+          document.removeEventListener('visibilitychange', onVis);
+          arm();
         }
-      },
-      { threshold: 0.2 },
-    );
-    if (ref.current) io.observe(ref.current);
-    return () => io.disconnect();
+      };
+      document.addEventListener('visibilitychange', onVis);
+      return () => document.removeEventListener('visibilitychange', onVis);
+    }
   }, []);
 
   useEffect(() => {
