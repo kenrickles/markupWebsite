@@ -29,3 +29,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Vanessa Li’s macOS desktop reference
+
+Source: https://github.com/VANESSA123LI/personalwebsite (reviewed 25 October 2026).
+
+`src/components/MacAppIcons.tsx` adapts `app/desktop/icons.tsx`, retaining the reference SVG artwork and changing its config type import to a local type. The Apple menu mark in `MacIcons.tsx` adapts the reference `MenuBar.tsx`. The desktop font stack and wallpaper gradients follow `app/globals.css` and `app/desktop/config.ts` respectively. Vanessa Li retains authorship of the reused source. Brand names and marks belong to their respective owners.
+
+The portfolio’s Notes content, menu actions, dock integration, existing terminal, and responsive shell are adapted for Kenrick’s site. The reference’s personal text, conversations, photos, system specifications, and reminder data are not included.
