@@ -98,7 +98,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     })
     .click();
   await expect(messages.getByRole("log")).toContainText(
-    "am i building a website or funding a pyramid scheme",
+    "remove the roadmap. add the website.",
   );
   await expect(messages).toContainText("Fictional conversations");
   const back = messages.getByRole("button", {
@@ -113,7 +113,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     })
     .click();
   await expect(messages.getByRole("log")).toContainText(
-    "Opening the dissertation.",
+    "i’m leaning towards unplugging you",
   );
   await expect(messages.getByRole("textbox")).toBeDisabled();
   await messages
@@ -125,7 +125,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     .click();
   await expect(messages).toBeVisible();
   await expect(messages.getByRole("log")).toContainText(
-    "Opening the dissertation.",
+    "i’m leaning towards unplugging you",
   );
   await messages
     .getByRole("button", { name: "Close Messages", exact: true })
