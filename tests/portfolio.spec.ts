@@ -23,18 +23,16 @@ test("desktop notes expose the full work history and project summaries", async (
     .getByRole("button", { name: "Open projects", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Things I’ve built." }),
+    page.getByRole("heading", { name: "Selected work" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "AI where the work happens" }),
+    page.getByRole("heading", { name: "Internal AI Tooling Suite" }),
   ).toBeAttached();
   await page.getByRole("button", { name: "Previous note" }).click();
-  await expect(
-    page.getByRole("heading", { name: "The journey so far." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
   await page.getByRole("button", { name: "Next note" }).click();
   await expect(
-    page.getByRole("heading", { name: "Things I’ve built." }),
+    page.getByRole("heading", { name: "Selected work" }),
   ).toBeVisible();
   expect(failures).toEqual([]);
 });
@@ -57,7 +55,7 @@ test("window controls restore content through the dock", async ({ page }) => {
   await page.getByRole("button", { name: "Restore window" }).click();
   await expect(page.locator(".notes-window")).not.toHaveClass(/notes-expanded/);
   await page.getByRole("button", { name: "Close notes" }).click();
-  await page.getByRole("button", { name: "A little about Kenrick" }).click();
+  await page.getByRole("button", { name: "Kenrick’s Notes" }).click();
   await expect(
     page.getByRole("region", { name: "Portfolio notes" }),
   ).toBeVisible();
@@ -75,11 +73,9 @@ test("notes search filters navigation and recovers from empty results", async ({
   await search.fill("zzzz");
   await expect(page.getByRole("status")).toHaveText("No matching notes.");
   await search.fill("Prudential");
-  await page.getByRole("button", { name: /The journey so far Galaxy/ }).click();
-  await expect(
-    page.getByRole("heading", { name: "The journey so far." }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Open introduction" }).click();
+  await page.getByRole("button", { name: /Experience Galaxy/ }).click();
+  await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
+  await page.getByRole("button", { name: "Open notes" }).click();
   await expect(search).toHaveValue("");
 });
 
@@ -168,7 +164,7 @@ test("desktop window dragging and resizing keep the titlebar reachable", async (
     "Touch screens use a fixed compact window.",
   );
   await page.goto("./");
-  await page.getByRole("button", { name: "Open introduction" }).click();
+  await page.getByRole("button", { name: "Open notes" }).click();
   const window = page.locator(".notes-window");
   const before = await window.boundingBox();
   if (!before) throw new Error("Notes window missing");
@@ -195,4 +191,95 @@ test("desktop window dragging and resizing keep the titlebar reachable", async (
   expect(resized!.width).toBeLessThan(moved!.width - 40);
   expect(resized!.x).toBeGreaterThanOrEqual(0);
   expect(resized!.y).toBeGreaterThanOrEqual(34);
+});
+
+test("Apple menu, About panel, and appearance controls work", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: "Apple menu", exact: true }).click();
+  await page
+    .getByRole("button", { name: "About Kenrick Tan", exact: true })
+    .click();
+  const about = page.getByRole("dialog", {
+    name: "About Kenrick Tan",
+    exact: true,
+  });
+  await expect(about).toBeVisible();
+  await expect(about).toContainText("Galaxy Digital");
+  await page.keyboard.press("Escape");
+  await expect(about).not.toBeVisible();
+  await page
+    .getByRole("button", { name: "Appearance settings", exact: true })
+    .click();
+  const settings = page.getByRole("dialog", {
+    name: "Appearance settings",
+    exact: true,
+  });
+  await settings.getByRole("button", { name: "Dark", exact: true }).click();
+  await expect(page.locator(".desktop-portfolio")).toHaveClass(/desktop-night/);
+  await settings.getByRole("button", { name: "Light", exact: true }).click();
+  await expect(page.locator(".desktop-portfolio")).not.toHaveClass(
+    /desktop-night/,
+  );
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Apple menu", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Apple menu", exact: true }),
+  ).toHaveAttribute("aria-expanded", "false");
+});
+
+test("native typography, project links, and Galaxy information are retained", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await expect(page.locator(".desktop-portfolio")).toHaveCSS(
+    "font-family",
+    /-apple-system/,
+  );
+  await expect(page.locator(".note-content")).toContainText(
+    "Before engineering, I studied psychology and communications.",
+  );
+  await expect(page.locator(".note-content")).not.toContainText("mahjong");
+  await page
+    .getByRole("button", { name: "Open projects", exact: true })
+    .click();
+  await page
+    .getByRole("link", { name: "Read case study", exact: true })
+    .first()
+    .click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Protocol Reliability Flight Deck",
+  );
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: "Open experience", exact: true })
+    .click();
+  await expect(page.locator(".desktop-experience")).toContainText(
+    "Sep 2025 — Present",
+  );
+  await expect(page.locator(".desktop-experience")).toContainText(
+    "AI Champion",
+  );
+});
+
+test("compact notes list and search make every section reachable", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "mobile", "Compact layout only.");
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: "Back to note list", exact: true })
+    .click();
+  await page.getByRole("textbox", { name: "Search notes" }).fill("Helm");
+  await page.getByRole("button", { name: /^Experience Galaxy/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "Experience", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page
+      .locator(".note-content")
+      .evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
 });
