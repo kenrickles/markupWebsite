@@ -29,3 +29,5 @@ Remove the Selected Work note, folder shortcut, Finder-to-projects action, case-
 `src/lib/agentConversations.ts` contains four fictional, scripted exchanges: The agent group chat, Research Agent, Renovation Agent, and Deploy Agent. They are humor written for this portfolio, not real private transcripts or live AI integrations. The composer is disabled and the UI identifies the content as fictional. The mail icon and contact note retain real contact links.
 
 Validation includes recovered copy and historical roles, Galaxy retention, certification links, obsolete route 404/sitemap removal, Notes navigation, Messages thread switching and minimize/restore, native panel geometry, compact layouts, blocked storage, reduced motion, and no-JavaScript résumé access.
+
+The portfolio introduction was subsequently replaced with Kenrick’s supplied biography, including Renaissance developer aspirations, T-shaped thinking, omotenashi, kaizen and paying it forward. The archived Hugo source remains unchanged.
