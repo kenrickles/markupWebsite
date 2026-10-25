@@ -75,6 +75,10 @@ test("visitors explore files, work history and accurate biography", async ({
   await command(page, "cat 01-galaxy-digital.md");
   await expect(log).toContainText("Sep 2025 — Present");
   await expect(log).toContainText("AI Champion");
+  await terminal
+    .getByRole("button", { name: "cat ~/about.md", exact: true })
+    .click();
+  await expect(log).toContainText(introduction.lead);
   await command(page, "cat ../about.md");
   await expect(log).toContainText(introduction.paragraphs[3]);
   await command(page, "cd ..");

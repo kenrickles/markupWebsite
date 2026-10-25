@@ -152,7 +152,9 @@ test("window controls restore Notes and printable resume contains the recovered 
   await page
     .getByRole("button", { name: "Expand window", exact: true })
     .click();
-  await expect(page.locator(".notes-window")).toHaveClass(/notes-expanded/);
+  await expect(
+    page.getByRole("region", { name: "Portfolio notes", exact: true }),
+  ).toHaveClass(/notes-expanded/);
   await page
     .getByRole("button", { name: "Restore window", exact: true })
     .click();

@@ -357,7 +357,7 @@ export default function TerminalShell({
             className="terminal-starters"
             aria-label="Suggested terminal commands"
           >
-            {["help", "ls", "cat about.md", "agent status"].map((command) => (
+            {["help", "ls", "cat ~/about.md", "agent status"].map((command) => (
               <button key={command} onClick={() => run(command)}>
                 {command}
               </button>
