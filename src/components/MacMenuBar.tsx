@@ -8,6 +8,7 @@ type Menu =
   "Apple" | "File" | "Edit" | "View" | "Window" | "Help" | "Appearance";
 export default function MacMenuBar({
   opened,
+  appName,
   night,
   clock,
   onToggleTheme,
@@ -18,6 +19,7 @@ export default function MacMenuBar({
   onFind,
 }: {
   opened: boolean;
+  appName?: string;
   night: boolean;
   clock: string;
   onToggleTheme: () => void;
@@ -74,7 +76,7 @@ export default function MacMenuBar({
         >
           <AppleLogo />
         </button>
-        <strong>{opened ? "Notes" : "Finder"}</strong>
+        <strong>{appName ?? (opened ? "Notes" : "Finder")}</strong>
         <nav aria-label="Desktop menu">
           {(["File", "Edit", "View", "Window", "Help"] as Menu[]).map(button)}
         </nav>

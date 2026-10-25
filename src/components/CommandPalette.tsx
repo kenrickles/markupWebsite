@@ -106,7 +106,7 @@ export default function CommandPalette() {
     run: () => window.open(url, "_blank", "noopener,noreferrer"),
   });
   const items: Item[] = [
-    jump("projects", "Work"),
+    jump("experience", "Experience"),
     jump("about", "About"),
     jump("experience", "Experience"),
     jump("education", "Education"),

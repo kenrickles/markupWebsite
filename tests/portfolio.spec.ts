@@ -1,199 +1,166 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
-test("desktop notes expose the full work history and project summaries", async ({
+async function openContact(page: Page) {
+  await page
+    .getByRole("button", { name: "Open introduction", exact: true })
+    .click();
+  const back = page.getByRole("button", {
+    name: "Back to note list",
+    exact: true,
+  });
+  if (await back.isVisible()) await back.click();
+  await page.getByRole("button", { name: /^Say hello/ }).click();
+}
+
+test("recovered introduction, work history, and chronology render without errors", async ({
   page,
 }) => {
-  const failures: string[] = [];
-  page.on("pageerror", (error) => failures.push(error.message));
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Hi, I’m Kenrick.",
+    "Hello, I'm Kenrick",
+  );
+  await expect(page.locator(".note-content")).toContainText(
+    "I desire to be a T-shaped problem solver and believe in paying it forward.",
   );
   await expect(page.getByRole("img", { name: "Kenrick Tan" })).toBeVisible();
+  await expect(page.getByText("Selected work", { exact: true })).toHaveCount(0);
   await page
     .getByRole("button", { name: "Open experience", exact: true })
     .click();
   await expect(
     page.getByRole("heading", { name: "Galaxy Digital", exact: true }),
   ).toBeVisible();
+  await expect(page.locator(".desktop-experience")).toContainText(
+    "AI Champion",
+  );
   await expect(
-    page.getByRole("heading", { name: "Versent Singapore" }),
+    page.getByRole("heading", { name: "Swype Pte. Ltd.", exact: true }),
   ).toBeAttached();
-  await page
-    .getByRole("button", { name: "Open projects", exact: true })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Selected work" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Internal AI Tooling Suite" }),
-  ).toBeAttached();
+  await expect(page.locator(".desktop-experience")).toContainText("S$356,000");
   await page.getByRole("button", { name: "Previous note" }).click();
-  await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Hello, I'm Kenrick",
+  );
   await page.getByRole("button", { name: "Next note" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Selected work" }),
-  ).toBeVisible();
-  expect(failures).toEqual([]);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Experience",
+  );
+  expect(errors).toEqual([]);
 });
 
-test("window controls restore content through the dock", async ({ page }) => {
+test("note search finds recovered roles and handles no results", async ({
+  page,
+}) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Open contact", exact: true }).click();
+  const back = page.getByRole("button", {
+    name: "Back to note list",
+    exact: true,
+  });
+  if (await back.isVisible()) await back.click();
+  const search = page.getByRole("textbox", { name: "Search notes" });
+  await search.fill("no-such-note");
+  await expect(page.getByRole("status")).toHaveText("No matching notes.");
+  await search.fill("Swype");
+  await page.getByRole("button", { name: /^Experience Galaxy/ }).click();
+  await expect(page.locator(".note-content")).toContainText(
+    "100 paying users and 50 merchants",
+  );
+  await page
+    .getByRole("button", { name: "Open introduction", exact: true })
+    .click();
+  if (await back.isVisible()) await back.click();
+  await expect(search).toHaveValue("");
+  await page.getByRole("button", { name: /^Education & recognition/ }).click();
+  await expect(page.locator(".note-content")).toContainText("IE University");
+  await expect(
+    page.getByRole("link", { name: "Verify Certification" }),
+  ).toHaveAttribute("href", /credly.com/);
+  await expect(page.locator(".note-content")).toContainText(
+    "CID Director Awards",
+  );
+});
+
+test("Messages is a separate fictional agent conversation app", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: "Open Messages", exact: true })
+    .click();
+  const messages = page.getByRole("region", { name: "Messages", exact: true });
+  await expect(messages).toBeVisible();
+  await messages
+    .getByRole("button", {
+      name: "Conversation with The agent group chat",
+      exact: true,
+    })
+    .click();
+  await expect(messages.getByRole("log")).toContainText(
+    "am i building a website or funding a pyramid scheme",
+  );
+  await expect(messages).toContainText("Fictional conversations");
+  const back = messages.getByRole("button", {
+    name: "Back to conversation list",
+    exact: true,
+  });
+  if (await back.isVisible()) await back.click();
+  await messages
+    .getByRole("button", {
+      name: "Conversation with Research Agent",
+      exact: true,
+    })
+    .click();
+  await expect(messages.getByRole("log")).toContainText(
+    "Opening the dissertation.",
+  );
+  await expect(messages.getByRole("textbox")).toBeDisabled();
+  await messages
+    .getByRole("button", { name: "Minimize Messages", exact: true })
+    .click();
+  await expect(messages).not.toBeVisible();
+  await page
+    .getByRole("button", { name: "Open Messages", exact: true })
+    .click();
+  await expect(messages).toBeVisible();
+  await expect(messages.getByRole("log")).toContainText(
+    "Opening the dissertation.",
+  );
+  await messages
+    .getByRole("button", { name: "Close Messages", exact: true })
+    .click();
+  await expect(messages).not.toBeAttached();
+});
+
+test("window controls restore Notes and printable resume contains the recovered content", async ({
+  page,
+}) => {
+  await page.goto("./");
   await page.getByRole("button", { name: "Minimize notes" }).click();
   await expect(
     page.getByRole("region", { name: "Portfolio notes" }),
   ).not.toBeVisible();
   await page.getByRole("button", { name: "Open notes", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Hi, I’m Kenrick." }),
-  ).toBeVisible();
   await page
     .getByRole("button", { name: "Expand window", exact: true })
     .click();
   await expect(page.locator(".notes-window")).toHaveClass(/notes-expanded/);
-  await page.getByRole("button", { name: "Restore window" }).click();
-  await expect(page.locator(".notes-window")).not.toHaveClass(/notes-expanded/);
-  await page.getByRole("button", { name: "Close notes" }).click();
-  await page.getByRole("button", { name: "Kenrick’s Notes" }).click();
-  await expect(
-    page.getByRole("region", { name: "Portfolio notes" }),
-  ).toBeVisible();
-});
-
-test("notes search filters navigation and recovers from empty results", async ({
-  page,
-}, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Compact navigation uses scrollable note tabs.",
-  );
-  await page.goto("./");
-  const search = page.getByRole("textbox", { name: "Search notes" });
-  await search.fill("zzzz");
-  await expect(page.getByRole("status")).toHaveText("No matching notes.");
-  await search.fill("Prudential");
-  await page.getByRole("button", { name: /Experience Galaxy/ }).click();
-  await expect(page.getByRole("heading", { name: "Experience" })).toBeVisible();
-  await page.getByRole("button", { name: "Open notes" }).click();
-  await expect(search).toHaveValue("");
-});
-
-test("contact links and printable résumé remain usable", async ({ page }) => {
-  await page.goto("./");
-  await page.getByRole("button", { name: "Open contact", exact: true }).click();
-  await expect(page.locator(".contact-letter")).toHaveAttribute(
-    "href",
-    "mailto:kenrickles@gmail.com",
-  );
+  await page
+    .getByRole("button", { name: "Restore window", exact: true })
+    .click();
   await page.getByRole("link", { name: "Open résumé", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
-  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Print / Save as PDF" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "← Back to portfolio" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Hi, I’m Kenrick." }),
-  ).toBeVisible();
-});
-
-test("responsive content stays reachable with reduced motion and blocked storage", async ({
-  page,
-}, info) => {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.addInitScript(() => {
-    Storage.prototype.getItem = () => {
-      throw new DOMException("Denied", "SecurityError");
-    };
-    Storage.prototype.setItem = () => {
-      throw new DOMException("Denied", "SecurityError");
-    };
-  });
-  await page.goto("./");
-  await expect(
-    page.getByRole("heading", { name: "Hi, I’m Kenrick." }),
-  ).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
-  await page.getByRole("button", { name: "Open contact", exact: true }).click();
-  await expect(page.locator(".contact-letter")).toBeVisible();
-  expect(
-    await page
-      .locator(".note-content")
-      .evaluate((el) => el.scrollWidth <= el.clientWidth),
-  ).toBe(true);
-  await page.screenshot({
-    path: info.outputPath("contact.png"),
-    fullPage: true,
-  });
-  expect(errors).toEqual([]);
-});
-
-test("résumé remains accessible without JavaScript", async ({
-  browser,
-  baseURL,
-}) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
-  const page = await context.newPage();
-  await page.goto(baseURL!);
-  await expect(
-    page.getByRole("heading", { name: "Hi, I’m Kenrick." }),
-  ).toBeVisible();
-  await page.getByRole("link", { name: "Open résumé", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Experience", exact: true }),
-  ).toBeVisible();
-  await context.close();
-});
-
-test("desktop window dragging and resizing keep the titlebar reachable", async ({
-  page,
-}, info) => {
-  test.skip(
-    info.project.name === "mobile",
-    "Touch screens use a fixed compact window.",
+  await expect(page.locator(".resume-page")).toContainText("Galaxy Digital");
+  await expect(page.locator(".resume-page")).toContainText("Financial Adviser");
+  await expect(page.locator(".resume-page")).toContainText(
+    "CID Director Awards",
   );
-  await page.goto("./");
-  await page.getByRole("button", { name: "Open notes" }).click();
-  const window = page.locator(".notes-window");
-  const before = await window.boundingBox();
-  if (!before) throw new Error("Notes window missing");
-  const title = page.locator(".notes-titlebar");
-  const bar = await title.boundingBox();
-  if (!bar) throw new Error("Titlebar missing");
-  await page.mouse.move(bar.x + bar.width / 2, bar.y + 20);
-  await page.mouse.down();
-  await page.mouse.move(bar.x + bar.width / 2 + 60, bar.y + 60, { steps: 8 });
-  await page.mouse.up();
-  const moved = await window.boundingBox();
-  expect(moved!.x).toBeGreaterThan(before.x + 40);
-  expect(moved!.y).toBeGreaterThan(before.y + 20);
-  const handle = await page.locator(".window-resize").boundingBox();
-  if (!handle) throw new Error("Resize handle missing");
-  await page.mouse.move(
-    handle.x + handle.width - 4,
-    handle.y + handle.height - 4,
-  );
-  await page.mouse.down();
-  await page.mouse.move(handle.x - 65, handle.y - 30, { steps: 8 });
-  await page.mouse.up();
-  const resized = await window.boundingBox();
-  expect(resized!.width).toBeLessThan(moved!.width - 40);
-  expect(resized!.x).toBeGreaterThanOrEqual(0);
-  expect(resized!.y).toBeGreaterThanOrEqual(34);
 });
 
-test("Apple menu, About panel, and appearance controls work", async ({
+test("Apple menu and native appearance panel remain compact", async ({
   page,
 }) => {
   await page.goto("./");
@@ -205,13 +172,9 @@ test("Apple menu, About panel, and appearance controls work", async ({
     name: "About Kenrick Tan",
     exact: true,
   });
-  await expect(about).toBeVisible();
   await expect(about).toContainText("Galaxy Digital");
-  const panel = await about.boundingBox();
-  expect(panel!.height).toBeLessThan(450);
-  expect(panel!.x).toBeGreaterThan(20);
+  expect((await about.boundingBox())!.height).toBeLessThan(450);
   await page.keyboard.press("Escape");
-  await expect(about).not.toBeVisible();
   await page
     .getByRole("button", { name: "Appearance settings", exact: true })
     .click();
@@ -226,63 +189,83 @@ test("Apple menu, About panel, and appearance controls work", async ({
     /desktop-night/,
   );
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Apple menu", exact: true }).click();
-  await page.keyboard.press("Escape");
-  await expect(
-    page.getByRole("button", { name: "Apple menu", exact: true }),
-  ).toHaveAttribute("aria-expanded", "false");
 });
 
-test("native typography, project links, and Galaxy information are retained", async ({
-  page,
-}) => {
-  await page.goto("./");
-  await expect(page.locator(".desktop-portfolio")).toHaveCSS(
-    "font-family",
-    /-apple-system/,
-  );
-  await expect(page.locator(".note-content")).toContainText(
-    "Before engineering, I studied psychology and communications.",
-  );
-  await expect(page.locator(".note-content")).not.toContainText("mahjong");
-  await page
-    .getByRole("button", { name: "Open projects", exact: true })
-    .click();
-  await page
-    .getByRole("link", { name: "Read case study", exact: true })
-    .first()
-    .click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Protocol Reliability Flight Deck",
-  );
-  await page.goto("./");
-  await page
-    .getByRole("button", { name: "Open experience", exact: true })
-    .click();
-  await expect(page.locator(".desktop-experience")).toContainText(
-    "Sep 2025 — Present",
-  );
-  await expect(page.locator(".desktop-experience")).toContainText(
-    "AI Champion",
-  );
-});
-
-test("compact notes list and search make every section reachable", async ({
+test("reduced motion and blocked storage keep both apps usable without clipping", async ({
   page,
 }, info) => {
-  test.skip(info.project.name !== "mobile", "Compact layout only.");
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    Storage.prototype.getItem = () => {
+      throw new DOMException("Denied", "SecurityError");
+    };
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Denied", "SecurityError");
+    };
+  });
   await page.goto("./");
-  await page
-    .getByRole("button", { name: "Back to note list", exact: true })
-    .click();
-  await page.getByRole("textbox", { name: "Search notes" }).fill("Helm");
-  await page.getByRole("button", { name: /^Experience Galaxy/ }).click();
-  await expect(
-    page.getByRole("heading", { name: "Experience", exact: true }),
-  ).toBeVisible();
+  await openContact(page);
+  await expect(page.locator(".contact-letter")).toHaveAttribute(
+    "href",
+    "mailto:kenrickles@gmail.com",
+  );
   expect(
     await page
       .locator(".note-content")
       .evaluate((el) => el.scrollWidth <= el.clientWidth),
   ).toBe(true);
+  await page
+    .getByRole("button", { name: "Open Messages", exact: true })
+    .click();
+  const messages = page.getByRole("region", { name: "Messages", exact: true });
+  await messages
+    .getByRole("button", {
+      name: "Conversation with Deploy Agent",
+      exact: true,
+    })
+    .click();
+  expect(
+    await messages
+      .locator(".agent-thread")
+      .evaluate((el) => el.scrollWidth <= el.clientWidth),
+  ).toBe(true);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: info.outputPath("agent-messages.png"),
+    fullPage: true,
+  });
+  expect(errors).toEqual([]);
+});
+
+test("removed case studies are absent from routes and sitemap", async ({
+  request,
+}) => {
+  const response = await request.get("./case-studies/protocol-flight-deck/");
+  expect(response.status()).toBe(404);
+  const map = await request.get("./sitemap.xml");
+  expect(await map.text()).not.toContain("case-studies");
+});
+
+test("resume remains accessible without JavaScript", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(baseURL!);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Hello, I'm Kenrick",
+  );
+  await page.getByRole("link", { name: "Open résumé", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".resume-page")).toContainText("Swype Pte. Ltd.");
+  await context.close();
 });

@@ -3,21 +3,21 @@ import { useRef, useState, type CSSProperties } from "react";
 import MacIcon, { type MacIconName } from "./MacIcons";
 
 type Action =
-  "about" | "projects" | "experience" | "contact" | "terminal" | "settings";
+  "about" | "experience" | "contact" | "messages" | "terminal" | "settings";
 const apps: {
   icon: MacIconName;
   label: string;
   action?: Action;
   href?: string;
 }[] = [
-  { icon: "finder", label: "Open projects", action: "projects" },
+  { icon: "finder", label: "Open introduction", action: "about" },
   {
     icon: "safari",
     label: "Visit GitHub",
     href: "https://github.com/kenrickles",
   },
   { icon: "mail", label: "Email Kenrick", href: "mailto:kenrickles@gmail.com" },
-  { icon: "messages", label: "Open contact", action: "contact" },
+  { icon: "messages", label: "Open Messages", action: "messages" },
   { icon: "notes", label: "Open notes", action: "about" },
   { icon: "reminders", label: "Open experience", action: "experience" },
   { icon: "terminal", label: "Open interactive terminal", action: "terminal" },

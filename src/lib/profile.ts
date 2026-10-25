@@ -1,3 +1,4 @@
+import { historicalExperiences } from "./recoveredProfile";
 export const experiences = [
   {
     timeframe: "Sep 2025 — Present",
@@ -57,10 +58,13 @@ export const experiences = [
     company: "Partior Pte Ltd",
     location: "Singapore",
     highlights: [
-      "Built DevOps automation for environment creation and management, reducing onboarding friction.",
-      "Co-developed a Go CLI to simplify client onboarding and improve self-service workflows.",
-      "Authored the Certification Practice Statement and streamlined Scope of Work, saving $125k.",
-      "Earned performance ratings: Overachieved (Jun 2022) and Significantly Overachieved (Dec 2022).",
+      "Co-developed an one-touch DevOps automation pipeline for delivery of a secure, easy, fast, highly available and scalable strategic blockchain network across multiple cloud platforms",
+      "Containerisation of GoQuorum blockchain network application for strategic platform including all peripheral for deployment of an optimum cloud-container-native application network.",
+      "Containerisation of DApps for clients to deploy easily with AWS EKS and GCP GKE",
+      "Co-develop a command line interface in go-lang based on the Cobra framework",
+      "Smart contract deployment via CICD Pipelines using Github Actions",
+      "Cloud native deployment for sitnet, testnet and prodnet",
+      "Integration of Hashicorp Vault with CICD Pipeline and k8s clusters alongside External Secrets Operator",
     ],
     stack: ["Go", "Terraform", "Docker", "Python"],
   },
@@ -76,6 +80,7 @@ export const experiences = [
     ],
     stack: ["Jenkins", "Bamboo", "Azure", "Prometheus", "ArgoCD"],
   },
+  ...historicalExperiences,
 ];
 
 export const education = [
@@ -84,23 +89,29 @@ export const education = [
     program: "Coding Bootcamp (Frontend, Backend, DSA)",
     school: "Rocket Academy",
     location: "Singapore",
-    highlights: ["Full-stack product delivery with modern web stacks."],
+    highlights: [
+      "Learnt practical technologies and key principles for Front-end and Backend Apps as well as Data Structures and Algorithms",
+    ],
   },
   {
     timeframe: "Aug 2015 — Jan 2020",
-    program:
-      "Bachelor of Social Science (Psychology & Communications), High Merit",
+    program: "Bachelor of Arts, Double Major",
     school: "Singapore Management University",
     location: "Singapore",
-    highlights: [
-      "IE University exchange (Jan — May 2018).",
-      "Ho See Beng Scholarship (2017).",
-    ],
+    highlights: ["High Merit in Psychology and Corporate Communications"],
+  },
+  {
+    timeframe: "Jan 2018 — May 2018",
+    program: "Exchange Program",
+    school: "IE University",
+    location: "Segovia, Spain",
+    highlights: [],
   },
 ];
 
 export const awards = [
   "Ho See Beng Scholarship (2017)",
   "Commissioner of Police Commendation",
-  "Certified Kubernetes Administrator (CKA)",
+  "National Service Grade A (Top 10% of Cohort)",
+  "CID Director Awards",
 ];
