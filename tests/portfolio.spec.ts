@@ -207,6 +207,9 @@ test("Apple menu, About panel, and appearance controls work", async ({
   });
   await expect(about).toBeVisible();
   await expect(about).toContainText("Galaxy Digital");
+  const panel = await about.boundingBox();
+  expect(panel!.height).toBeLessThan(450);
+  expect(panel!.x).toBeGreaterThan(20);
   await page.keyboard.press("Escape");
   await expect(about).not.toBeVisible();
   await page

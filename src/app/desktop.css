@@ -1166,3 +1166,24 @@
     color: black;
   }
 }
+/* The existing command dialog is viewport-sized; native panels have their own geometry. */
+.app-dialog:has(.native-about) {
+  height: fit-content;
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  overflow: auto;
+}
+.app-dialog:has(.native-about)::backdrop {
+  background: #00000022;
+  backdrop-filter: blur(2px);
+}
+.desktop-night .app-dialog:has(.native-about) {
+  background: #2d2d30f5;
+  color: #f4f4f5;
+  border-color: #ffffff26;
+}
+.desktop-night .native-about a {
+  background: #49494c;
+  color: #fff;
+  border-color: #ffffff26;
+}
