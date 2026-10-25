@@ -234,3 +234,57 @@ test("resume and writing index are available without JavaScript", async ({
   ).toBeVisible();
   await context.close();
 });
+
+test("dock stays in the viewport while Safari scrolls and the viewport changes", async ({
+  page,
+}) => {
+  await page.goto("./#safari/experience");
+  const dock = page.getByRole("navigation", { name: "Application dock" });
+  const safari = page.getByRole("region", { name: "Safari", exact: true });
+  const reader = safari.getByRole("tabpanel");
+  const assertDock = async () => {
+    await expect(dock).toBeVisible();
+    const geometry = await dock.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      const viewport = window.visualViewport;
+      return {
+        top: rect.top,
+        bottom: rect.bottom,
+        left: rect.left,
+        right: rect.right,
+        height: viewport?.height ?? innerHeight,
+        width: viewport?.width ?? innerWidth,
+        scrollY: window.scrollY,
+      };
+    });
+    expect(geometry.top).toBeGreaterThanOrEqual(0);
+    expect(geometry.bottom).toBeLessThanOrEqual(geometry.height);
+    expect(geometry.left).toBeGreaterThanOrEqual(0);
+    expect(geometry.right).toBeLessThanOrEqual(geometry.width);
+    expect(geometry.scrollY).toBe(0);
+  };
+  await assertDock();
+  // Real wheel input exercises the article scroller and scroll chaining at its edge.
+  await reader.hover();
+  await page.mouse.wheel(0, 100000);
+  await expect
+    .poll(() => reader.evaluate((el) => el.scrollTop))
+    .toBeGreaterThan(0);
+  await page.mouse.wheel(0, 100000);
+  await assertDock();
+  await safari
+    .getByRole("button", { name: "Expand Safari window", exact: true })
+    .click();
+  await assertDock();
+  // Short landscape viewports used to put the dock below the 450px desktop minimum.
+  await page.setViewportSize({ width: 844, height: 390 });
+  await assertDock();
+  await page.setViewportSize({ width: 390, height: 600 });
+  await assertDock();
+  await page.setViewportSize({ width: 390, height: 740 });
+  await assertDock();
+  await dock.getByRole("button", { name: "Open writing", exact: true }).click();
+  await expect(
+    page.getByRole("region", { name: "Notes", exact: true }),
+  ).toHaveClass(/front-window/);
+});
