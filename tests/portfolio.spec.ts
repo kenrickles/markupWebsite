@@ -36,9 +36,16 @@ test("recovered introduction, work history, and chronology render without errors
     "AI Champion",
   );
   await expect(
-    page.getByRole("heading", { name: "Swype Pte. Ltd.", exact: true }),
+    page.getByRole("heading", {
+      name: "Singapore Management University",
+      exact: true,
+    }),
   ).toBeAttached();
   await expect(page.locator(".desktop-experience")).toContainText("S$356,000");
+  await expect(page.locator(".desktop-experience")).not.toContainText("Swype");
+  await expect(page.locator(".desktop-experience")).not.toContainText(
+    "mindPower",
+  );
   await page.getByRole("button", { name: "Previous note" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Kenrick Tan",
@@ -62,10 +69,10 @@ test("note search finds recovered roles and handles no results", async ({
   const search = page.getByRole("textbox", { name: "Search notes" });
   await search.fill("no-such-note");
   await expect(page.getByRole("status")).toHaveText("No matching notes.");
-  await search.fill("Swype");
+  await search.fill("Management Associate");
   await page.getByRole("button", { name: /^Experience Galaxy/ }).click();
   await expect(page.locator(".note-content")).toContainText(
-    "100 paying users and 50 merchants",
+    "Management Associate Program goal of S$356,000",
   );
   await page
     .getByRole("button", { name: "Open introduction", exact: true })
@@ -266,6 +273,10 @@ test("resume remains accessible without JavaScript", async ({
   await expect(
     page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
   ).toBeVisible();
-  await expect(page.locator(".resume-page")).toContainText("Swype Pte. Ltd.");
+  await expect(page.locator(".resume-page")).toContainText(
+    "Teaching Assistant",
+  );
+  await expect(page.locator(".resume-page")).not.toContainText("Swype");
+  await expect(page.locator(".resume-page")).not.toContainText("mindPower");
   await context.close();
 });

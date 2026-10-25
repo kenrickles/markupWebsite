@@ -11,7 +11,7 @@ The exact recovered résumé markdown is archived in `docs/sources/recovered-hug
 
 ## Imported and reconciled content
 
-- Restore Financial Adviser at Prudential, Swype, CEO mindPower Consultancy and the SMU Teaching Assistant role, with their original dates and achievement bullets.
+- Restore Financial Adviser at Prudential and the SMU Teaching Assistant role, with their original dates and achievement bullets. Swype and CEO mindPower were subsequently removed from the displayed profile at Kenrick’s request.
 - Restore the original Partior DevSecOps bullets, including Cobra CLI, smart-contract CI/CD, cloud-network deployments, and Vault/External Secrets integration.
 - Retain later engineering roles already confirmed in the profile: Galaxy Digital (September 2025–present), Prudential SRE, and the later Partior senior role. The recovered snapshot's old `Partior … Present` date is bounded by the existing chronology rather than creating two current jobs.
 - Restore the original education entries, with IE University as its own exchange entry. Keep the original degree wording for later user edits. The recovered Rocket Academy date says `Sep 2020 - April 2020`; use the already verified September 2020–April 2021 dates from the existing profile/2024 résumé instead of publishing an impossible interval.

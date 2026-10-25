@@ -18,27 +18,6 @@ export const historicalExperiences = [
     stack: [] as string[],
   },
   {
-    timeframe: "Jan 2019 — Mar 2020",
-    role: "Strategic Consultant / Product Manager",
-    company: "Swype Pte. Ltd.",
-    location: "Singapore",
-    highlights: [
-      "Collaborated in creating a business plan and presentation that attracted S$100,000 in seed capital.",
-      "Successfully released the Minimum Viable Product within 4 months and achieved the desired goal of 100 paying users and 50 merchants within 5 months.",
-    ],
-    stack: [] as string[],
-  },
-  {
-    timeframe: "Aug 2018 — Jan 2019",
-    role: "Project Consultant Business Intern",
-    company: "CEO mindPower Consultancy",
-    location: "Hong Kong",
-    highlights: [
-      "Improved operational efficiency of key accounts (Salvatore Ferragamo, Human Health Group (Listed), AAI Group(Listed)) by 15%, evidenced by a rise in KPI and revenue.",
-    ],
-    stack: [] as string[],
-  },
-  {
     timeframe: "Aug 2016 — Dec 2016",
     role: "Teaching Assistant",
     company: "Singapore Management University",

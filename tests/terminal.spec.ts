@@ -70,6 +70,8 @@ test("visitors explore files, work history and accurate biography", async ({
   );
   await command(page, "ls");
   await expect(log).toContainText("01-galaxy-digital.md");
+  await expect(log).not.toContainText("swype");
+  await expect(log).not.toContainText("mindpower");
   await command(page, "cat 01-galaxy-digital.md");
   await expect(log).toContainText("Sep 2025 — Present");
   await expect(log).toContainText("AI Champion");
