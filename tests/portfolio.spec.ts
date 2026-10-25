@@ -1,223 +1,88 @@
 import { test, expect } from "@playwright/test";
 
-test("export renders, navigates and exposes case-study interactions", async ({
-  page,
-}, testInfo) => {
+test("desktop notes expose the full work history and project summaries", async ({ page }) => {
   const failures: string[] = [];
-  page.on("pageerror", (e) => failures.push(e.message));
-  page.on("response", (response) => {
-    if (response.status() >= 400)
-      failures.push(`${response.status()} ${response.url()}`);
-  });
+  page.on("pageerror", error => failures.push(error.message));
   await page.goto("./");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Complex systems.",
-  );
-  await expect(page.locator(".hero-line").first()).toHaveCSS("opacity", "1");
-  await page.locator(".portrait-frame img").scrollIntoViewIfNeeded();
-  await expect
-    .poll(() =>
-      page
-        .locator(".portrait-frame img")
-        .evaluate(
-          (img: HTMLImageElement) => img.complete && img.naturalWidth > 0,
-        ),
-    )
-    .toBe(true);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
-  await page.getByRole("heading", { level: 1 }).scrollIntoViewIfNeeded();
-  await page.screenshot({
-    path: testInfo.outputPath("home.png"),
-    fullPage: true,
-  });
-  if (testInfo.project.name === "mobile") {
-    await page.getByRole("button", { name: "Open menu" }).click();
-  }
-  await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "Work", exact: true })
-    .click();
-  await expect(page.locator("#projects")).toBeInViewport();
-  await page.locator(".work-link").first().click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Protocol Reliability Flight Deck",
-  );
-  await page.getByRole("button", { name: /Telemetry Bus/ }).click();
-  await expect(page.locator("#architecture-detail")).toContainText(
-    "Prometheus + log pipelines",
-  );
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
-  await page.screenshot({
-    path: testInfo.outputPath("case-study.png"),
-    fullPage: true,
-  });
-  await page.getByRole("link", { name: /Back to work/ }).click();
-  await page
-    .locator("summary")
-    .filter({ hasText: "Prudential Singapore" })
-    .click();
-  await expect(
-    page.locator("details").filter({ hasText: "Prudential Singapore" }),
-  ).toHaveAttribute("open", "");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Hi, I’m Kenrick.");
+  await expect(page.getByRole("img", { name: "Kenrick Tan" })).toBeVisible();
+  await page.getByRole("button", { name: "Open experience", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Galaxy Digital", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Versent Singapore" })).toBeAttached();
+  await page.getByRole("button", { name: "Open projects", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Things I’ve built." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AI where the work happens" })).toBeAttached();
+  await page.getByRole("button", { name: "Previous note" }).click();
+  await expect(page.getByRole("heading", { name: "The journey so far." })).toBeVisible();
+  await page.getByRole("button", { name: "Next note" }).click();
+  await expect(page.getByRole("heading", { name: "Things I’ve built." })).toBeVisible();
   expect(failures).toEqual([]);
 });
 
-test("reduced motion keeps content visible and native scrolling", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("window controls restore content through the dock", async ({ page }) => {
   await page.goto("./");
-  await expect(page.locator("html")).not.toHaveClass(/lenis/);
-  await expect(page.locator(".hero-line").first()).toHaveCSS("opacity", "1");
-  await page.getByRole("link", { name: "Explore my work" }).click();
-  await expect(page.locator("#projects")).toBeInViewport();
+  await page.getByRole("button", { name: "Open contact", exact: true }).click();
+  await page.getByRole("button", { name: "Minimize notes" }).click();
+  await expect(page.getByRole("region", { name: "Portfolio notes" })).not.toBeVisible();
+  await page.getByRole("button", { name: "Open notes", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Hi, I’m Kenrick." })).toBeVisible();
+  await page.getByRole("button", { name: "Expand window", exact: true }).click();
+  await expect(page.locator(".notes-window")).toHaveClass(/notes-expanded/);
+  await page.getByRole("button", { name: "Restore window" }).click();
+  await expect(page.locator(".notes-window")).not.toHaveClass(/notes-expanded/);
+  await page.getByRole("button", { name: "Close notes" }).click();
+  await page.getByRole("button", { name: "A little about Kenrick" }).click();
+  await expect(page.getByRole("region", { name: "Portfolio notes" })).toBeVisible();
 });
 
-test("content and project links remain available without JavaScript", async ({
-  browser,
-  baseURL,
-}) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
-  const page = await context.newPage();
-  await page.goto(baseURL!);
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await page.locator(".work-link").first().click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Protocol Reliability Flight Deck",
-  );
-  await context.close();
-});
-
-test("terminal works with reduced motion, shares theme and restores focus", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "dark" });
+test("notes search filters navigation and recovers from empty results", async ({ page }, info) => {
+  test.skip(info.project.name === "mobile", "Compact navigation uses scrollable note tabs.");
   await page.goto("./");
-  const launch = page.getByRole("button", {
-    name: "Open interactive terminal",
-  });
-  await launch.click();
-  const terminal = page.getByRole("dialog", { name: "Interactive terminal" });
-  await expect(terminal).toBeVisible();
-  const input = terminal.getByRole("textbox", { name: "Terminal input" });
-  await expect(input).toBeFocused();
-  await input.fill("theme light");
-  await input.press("Enter");
-  await expect(page.locator("html")).toHaveClass(/light/);
-  await expect(terminal.getByRole("log")).toContainText("Daylight Ops");
-  await input.press("ArrowUp");
-  await expect(input).toHaveValue("theme light");
-  await input.fill("");
-  await input.press("Shift+Tab");
-  await expect(
-    terminal.getByRole("button", { name: "Close terminal" }),
-  ).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(terminal).not.toBeVisible();
-  await expect(launch).toBeFocused();
-  await page.reload();
-  await expect(page.locator("html")).toHaveClass(/light/);
+  const search = page.getByRole("textbox", { name: "Search notes" });
+  await search.fill("zzzz");
+  await expect(page.getByRole("status")).toHaveText("No matching notes.");
+  await search.fill("Prudential");
+  await page.getByRole("button", { name: /The journey so far Galaxy/ }).click();
+  await expect(page.getByRole("heading", { name: "The journey so far." })).toBeVisible();
+  await page.getByRole("button", { name: "Open introduction" }).click();
+  await expect(search).toHaveValue("");
 });
 
-test("command palette handles empty results, résumé navigation and terminal handoff", async ({
-  page,
-}) => {
-  await page.goto("./?static=1");
-  // wait for hydration: the theme toggle button only responds after client JS attaches
-  await expect(page.locator('button[aria-label="Open command palette"]')).toBeAttached();
-  await expect(
-    page.locator('button[aria-label="Open command palette"]'),
-  ).toBeEnabled();
-  await page.waitForTimeout(300);
-  await page.keyboard.press("Control+k");
-  const palette = page.getByRole("dialog", { name: "Command palette" });
-  await expect(palette).toBeVisible();
-  const search = palette.getByRole("combobox");
-  await search.fill("no-such-command");
-  await search.press("ArrowDown");
-  await search.press("Enter");
-  await expect(palette.getByText("No matching commands")).toBeVisible();
-  await search.fill("terminal");
-  await search.press("Enter");
-  await expect(
-    page.getByRole("dialog", { name: "Interactive terminal" }),
-  ).toBeVisible();
-  await expect(palette).not.toBeVisible();
-  const terminal = page.getByRole("textbox", { name: "Terminal input" });
-  await terminal.fill("open resume");
-  await terminal.press("Enter");
-  await expect(
-    page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Print / Save as PDF" }),
-  ).toBeVisible();
-});
-
-test("reduced motion can change during a visit without disabling controls", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
+test("contact links and printable résumé remain usable", async ({ page }) => {
   await page.goto("./");
-  await expect(page.locator("html")).toHaveClass(/lenis/);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator("html")).not.toHaveClass(/lenis/);
-  await expect(page.locator("html")).toHaveClass(/static-mode/);
-  await page.getByRole("button", { name: "Open interactive terminal" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "Interactive terminal" }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Open contact", exact: true }).click();
+  await expect(page.locator(".contact-letter")).toHaveAttribute("href", "mailto:kenrickles@gmail.com");
+  await page.getByRole("link", { name: "Open résumé", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Kenrick Tan", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Print / Save as PDF" })).toBeVisible();
+  await page.getByRole("link", { name: "← Back to portfolio" }).click();
+  await expect(page.getByRole("heading", { name: "Hi, I’m Kenrick." })).toBeVisible();
 });
 
-test("blocked storage does not crash theme or terminal interactions", async ({
-  page,
-}) => {
+test("responsive content stays reachable with reduced motion and blocked storage", async ({ page }, info) => {
   const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", error => errors.push(error.message));
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
-    Storage.prototype.getItem = () => {
-      throw new DOMException("Denied", "SecurityError");
-    };
-    Storage.prototype.setItem = () => {
-      throw new DOMException("Denied", "SecurityError");
-    };
+    Storage.prototype.getItem = () => { throw new DOMException("Denied", "SecurityError"); };
+    Storage.prototype.setItem = () => { throw new DOMException("Denied", "SecurityError"); };
   });
-  await page.goto("./?static=1");
-  await page.getByRole("button", { name: "Open interactive terminal" }).click();
-  const input = page.getByRole("textbox", { name: "Terminal input" });
-  await input.fill("theme light");
-  await input.press("Enter");
-  await expect(page.locator("html")).toHaveClass(/light/);
-  await input.fill("help");
-  await input.press("Enter");
-  await expect(page.getByRole("log")).toContainText("available commands:");
+  await page.goto("./");
+  await expect(page.getByRole("heading", { name: "Hi, I’m Kenrick." })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole("button", { name: "Open contact", exact: true }).click();
+  await expect(page.locator(".contact-letter")).toBeVisible();
+  await page.screenshot({ path: info.outputPath("contact.png"), fullPage: true });
   expect(errors).toEqual([]);
 });
 
-test("light theme has no horizontal overflow and exports share metadata", async ({
-  page,
-  request,
-  baseURL,
-}, testInfo) => {
-  await page.goto("./?static=1&theme=light");
-  await expect(page.locator("html")).toHaveClass(/light/);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
-  await page.screenshot({
-    path: testInfo.outputPath("light-home.png"),
-    fullPage: true,
-  });
-  expect((await request.get(`${baseURL}sitemap.xml`)).status()).toBe(200);
-  expect((await request.get(`${baseURL}missing-page/`)).status()).toBe(404);
+test("résumé remains accessible without JavaScript", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto(baseURL!);
+  await expect(page.getByRole("heading", { name: "Hi, I’m Kenrick." })).toBeVisible();
+  await page.getByRole("link", { name: "Open résumé", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Kenrick Tan", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Experience", exact: true })).toBeVisible();
+  await context.close();
 });
