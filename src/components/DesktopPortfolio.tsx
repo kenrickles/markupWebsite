@@ -120,7 +120,15 @@ export default function DesktopPortfolio() {
     )
       return;
     const rect = windowRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    if (!rect || !windowRef.current) return;
+    // Direct pointer manipulation must not compete with entrance or layout motion.
+    const el = windowRef.current;
+    el.style.transition = "none";
+    el.style.animation = "none";
+    el.style.translate = "none";
+    el.style.transform = "none";
+    el.style.left = `${rect.left}px`;
+    el.style.top = `${rect.top}px`;
     gesture.current = {
       x: e.clientX,
       y: e.clientY,
