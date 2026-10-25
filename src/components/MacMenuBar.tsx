@@ -141,7 +141,8 @@ export default function MacMenuBar({
                 "Focus Command Line"
               ) : (
                 <>
-                  Find in Notes… <kbd>⌘F</kbd>
+                  {appName === "Finder" ? "Find resources…" : "Find writing…"}{" "}
+                  <kbd>⌘F</kbd>
                 </>
               )}
             </button>

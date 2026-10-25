@@ -5,6 +5,7 @@ const root = path.resolve("out");
 const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 const port = Number(process.env.PORT ?? 3000);
 const types = {
+  ".pdf": "application/pdf",
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -64,6 +65,6 @@ http
       );
     }
   })
-  .listen(port, "127.0.0.1", () =>
+  .listen(port, process.env.HOST ?? "127.0.0.1", () =>
     console.log(`Preview: http://127.0.0.1:${port}${basePath}/`),
   );

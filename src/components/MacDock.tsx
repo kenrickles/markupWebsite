@@ -2,38 +2,31 @@
 import { useRef, useState, type CSSProperties } from "react";
 import MacIcon, { type MacIconName } from "./MacIcons";
 
-type Action =
-  "about" | "experience" | "contact" | "messages" | "terminal" | "settings";
+import type { DesktopApp } from "@/lib/desktop";
+type Action = DesktopApp | "settings";
 const apps: {
   icon: MacIconName;
   label: string;
   action?: Action;
   href?: string;
 }[] = [
-  { icon: "finder", label: "Open introduction", action: "about" },
-  {
-    icon: "safari",
-    label: "Visit GitHub",
-    href: "https://github.com/kenrickles",
-  },
+  { icon: "finder", label: "Open recommended tools", action: "finder" },
+  { icon: "safari", label: "Open Safari profile", action: "safari" },
   { icon: "mail", label: "Email Kenrick", href: "mailto:kenrickles@gmail.com" },
   { icon: "messages", label: "Open Messages", action: "messages" },
-  { icon: "notes", label: "Open notes", action: "about" },
-  { icon: "reminders", label: "Open experience", action: "experience" },
+  { icon: "notes", label: "Open writing", action: "notes" },
+  { icon: "reminders", label: "Open roadmap", action: "reminders" },
   { icon: "terminal", label: "Open interactive terminal", action: "terminal" },
-  { icon: "document", label: "Open résumé", href: "/resume/" },
   { icon: "settings", label: "Appearance settings", action: "settings" },
 ];
 export default function MacDock({
   onAction,
-  opened,
   active,
-  terminalRunning = false,
+  running,
 }: {
   onAction: (action: Action) => void;
-  opened: boolean;
   active: string;
-  terminalRunning?: boolean;
+  running: DesktopApp[];
 }) {
   const dock = useRef<HTMLElement>(null);
   const [scales, setScales] = useState<number[]>([]);
@@ -84,11 +77,7 @@ export default function MacDock({
             </span>
             <i
               className={
-                (
-                  app.icon === "terminal"
-                    ? terminalRunning
-                    : opened && (app.icon === "notes" || app.action === active)
-                )
+                app.action && running.includes(app.action as DesktopApp)
                   ? "dock-active"
                   : ""
               }
@@ -97,6 +86,7 @@ export default function MacDock({
         );
         const shared = {
           className: "dock-app",
+          "aria-current": app.action === active ? ("true" as const) : undefined,
           style,
           "aria-label": app.label,
         };

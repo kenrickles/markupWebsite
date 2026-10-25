@@ -75,13 +75,21 @@ export type TerminalTarget =
   | "experience"
   | "education"
   | "contact"
-  | "messages";
+  | "messages"
+  | "projects"
+  | "notes"
+  | "roadmap"
+  | "tools";
 export const terminalTargets: TerminalTarget[] = [
   "about",
   "experience",
   "education",
   "contact",
   "messages",
+  "projects",
+  "notes",
+  "roadmap",
+  "tools",
   "resume",
   "github",
   "linkedin",
@@ -90,6 +98,12 @@ export const terminalTargets: TerminalTarget[] = [
 const commands = [
   "help",
   "whoami",
+  "projects",
+  "now",
+  "contact",
+  "writing",
+  "roadmap",
+  "tools",
   "pwd",
   "ls",
   "cd",
@@ -218,7 +232,11 @@ export function executeTerminal(raw: string, ctx: Context): TerminalResult {
         "",
         "OPEN",
         "  open <app>         about · experience · education · contact",
-        "                     messages · resume · github · linkedin · telegram",
+        "                     projects · notes · roadmap · tools · messages",
+        "                     resume · github · linkedin · telegram",
+        "  projects / writing / roadmap / tools    Open an app",
+        "  now                Current direction",
+        "  contact            Ways to get in touch",
         "",
         "SESSION",
         "  history            Commands from this visit",
@@ -229,6 +247,22 @@ export function executeTerminal(raw: string, ctx: Context): TerminalResult {
         "↑↓ history · Tab complete · Ctrl+C cancel input",
         "Curious? Try agent status.",
       ].join("\n"),
+    );
+  if (
+    ["projects", "writing", "roadmap", "tools", "contact"].includes(command)
+  ) {
+    if (args.length) return error(`usage: ${command}`);
+    const target = (
+      command === "writing" ? "notes" : command
+    ) as TerminalTarget;
+    return {
+      lines: [{ text: `Opening ${command}…`, tone: "muted" }],
+      action: target,
+    };
+  }
+  if (command === "now")
+    return out(
+      "Protocol Engineer at Galaxy Digital.\nExploring blockchain, infrastructure and practical AI.\n\nFor my public aspirations: roadmap\nFor published thoughts: writing",
     );
   if (command === "whoami")
     return out(
