@@ -7,11 +7,13 @@
   --line: #00000016;
   --chrome: #f6f6f6c9;
   --link: #007aff;
-  position: relative;
+  position: fixed;
+  inset: 0;
   isolation: isolate;
-  height: 100svh;
-  min-height: 450px;
+  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
+  overscroll-behavior: none;
   color: var(--ink);
   font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
@@ -708,10 +710,10 @@
 }
 .desktop-dock {
   --dock-base: 48px;
-  position: absolute;
+  position: fixed;
   z-index: 5;
   left: 50%;
-  bottom: 8px;
+  bottom: max(8px, env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   display: flex;
   align-items: flex-end;
@@ -1062,7 +1064,7 @@
     gap: 4px;
     padding: 8px 7px 12px;
     border-radius: 18px;
-    bottom: 9px;
+    bottom: max(9px, env(safe-area-inset-bottom, 0px));
   }
   .dock-tooltip {
     display: none;
@@ -1137,6 +1139,8 @@
     display: none !important;
   }
   .desktop-portfolio {
+    position: relative;
+    inset: auto;
     height: auto;
     min-height: 0;
     overflow: visible;

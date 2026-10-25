@@ -184,6 +184,8 @@ test("desktop drag, keyboard resize, menu controls and shortcut share one window
   isMobile,
 }) => {
   test.skip(isMobile, "Desktop window manipulation uses the wide layout");
+  // Measure drag geometry without racing the window entrance animation.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("./");
   await page.keyboard.press("Control+Backquote");
   const terminal = page.getByRole("region", { name: "Terminal", exact: true });
