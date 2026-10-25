@@ -788,6 +788,7 @@
     -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, sans-serif;
 }
 .native-about {
+  width: 100%;
   position: relative;
   padding: 34px 25px 23px;
   display: flex;
