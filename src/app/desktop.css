@@ -1493,3 +1493,222 @@
     max-width: 84%;
   }
 }
+
+/* Terminal uses the same desktop chrome, with a quiet dark shell of its own. */
+.portfolio-terminal {
+  left: calc(9% + 110px);
+  top: 18%;
+  width: min(780px, calc(100% - 170px));
+  height: min(560px, calc(100% - 180px));
+  min-height: 280px;
+  background: #1d1e21;
+  color: #e8e9ed;
+}
+.portfolio-terminal[hidden] {
+  display: none;
+}
+.portfolio-terminal.notes-expanded {
+  left: 12px;
+  top: 40px;
+  width: calc(100% - 24px);
+  height: calc(100% - 140px);
+}
+.terminal-titlebar {
+  color: #ddd;
+  background: #303135;
+  border-bottom-color: #ffffff12;
+}
+.desktop-night .portfolio-terminal .terminal-titlebar {
+  color: #ddd;
+  background: #303135;
+}
+.terminal-window-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.terminal-workspace {
+  height: calc(100% - 39px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  font-family:
+    "SFMono-Regular", Menlo, Monaco, Consolas, var(--font-geist-mono), monospace;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.terminal-output {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff38 transparent;
+  padding: 18px 20px 10px;
+}
+.terminal-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 5px;
+}
+.terminal-command {
+  color: #eeeff2;
+  margin-top: 15px;
+}
+.terminal-success,
+.terminal-prompt > span {
+  color: #a7d3b0;
+}
+.terminal-muted {
+  color: #9da1aa;
+}
+.terminal-error {
+  color: #ff9c9a;
+}
+.terminal-accent,
+.terminal-prompt b {
+  color: #9ebff2;
+}
+.terminal-input-area {
+  padding: 6px 20px 12px;
+  flex-shrink: 0;
+}
+.terminal-command-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 9px;
+}
+.terminal-prompt {
+  white-space: nowrap;
+  font-weight: 400;
+}
+.terminal-prompt b {
+  font-weight: 400;
+}
+.terminal-input-row {
+  display: flex;
+  flex: 1;
+  min-width: 150px;
+  gap: 6px;
+}
+.portfolio-terminal input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #f1f2f5;
+  caret-color: #a7d3b0;
+  outline: none;
+  font: inherit;
+  padding: 4px 0;
+}
+.portfolio-terminal input::placeholder {
+  color: #858a94;
+}
+.terminal-input-row button {
+  background: transparent;
+  color: #c2c7d0;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+.terminal-input-row button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.terminal-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.terminal-starters button {
+  border: 1px solid #ffffff24;
+  background: #ffffff06;
+  color: #b7bdc8;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font: inherit;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.terminal-starters button:hover {
+  background: #ffffff12;
+  color: white;
+}
+.terminal-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #989da7;
+  border-top: 1px solid #ffffff12;
+  padding: 5px 20px;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+.portfolio-terminal button:focus-visible,
+.terminal-output:focus-visible {
+  outline: 2px solid #9ebff2;
+  outline-offset: -2px;
+}
+.terminal-resize {
+  border: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 65%,
+    #ffffff45 65%,
+    #ffffff45 70%,
+    transparent 70%,
+    transparent 80%,
+    #ffffff45 80%,
+    #ffffff45 85%,
+    transparent 85%
+  );
+}
+@container (max-width: 500px) {
+  .terminal-command-form {
+    display: block;
+  }
+  .terminal-input-row {
+    width: 100%;
+  }
+  .terminal-status > span:last-child {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .portfolio-terminal,
+  .portfolio-terminal.notes-expanded {
+    left: 8px;
+    top: 40px;
+    width: calc(100% - 16px);
+    height: var(--terminal-mobile-height, calc(100% - 132px));
+    min-height: 160px;
+  }
+  .terminal-workspace {
+    font-size: 12px;
+  }
+  .terminal-output {
+    padding: 12px 14px 8px;
+  }
+  .terminal-input-area {
+    padding: 6px 14px 10px;
+  }
+  .portfolio-terminal input {
+    font-size: 16px;
+  }
+  .terminal-starters button {
+    min-height: 32px;
+    padding: 6px 9px;
+  }
+  .terminal-status {
+    padding: 5px 14px;
+    font-size: 8px;
+  }
+  .terminal-resize {
+    display: none;
+  }
+}

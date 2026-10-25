@@ -106,6 +106,14 @@ export default function AgentMessages({
     setExpanded(!expanded);
   };
   useEffect(() => {
+    const toggle = () => {
+      panel.current?.removeAttribute("style");
+      setExpanded((value) => !value);
+    };
+    window.addEventListener("zoom-messages", toggle);
+    return () => window.removeEventListener("zoom-messages", toggle);
+  }, []);
+  useEffect(() => {
     const reset = () => panel.current?.removeAttribute("style");
     window.addEventListener("resize", reset);
     return () => window.removeEventListener("resize", reset);

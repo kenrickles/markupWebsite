@@ -15,6 +15,7 @@ export default function MacMenuBar({
   onAbout,
   onOpen,
   onClose,
+  onMinimize,
   onExpand,
   onFind,
 }: {
@@ -26,6 +27,7 @@ export default function MacMenuBar({
   onAbout: () => void;
   onOpen: () => void;
   onClose: () => void;
+  onMinimize?: () => void;
   onExpand: () => void;
   onFind: () => void;
 }) {
@@ -116,13 +118,15 @@ export default function MacMenuBar({
                 Résumé…
               </Link>
               <hr />
-              <button onClick={() => run(onClose)}>Close Notes</button>
+              <button onClick={() => run(onClose)}>
+                Close {appName ?? "Notes"}
+              </button>
             </>
           )}
           {menu === "File" && (
             <>
               <button onClick={() => run(onOpen)}>
-                Open Notes <kbd>↵</kbd>
+                Open {appName ?? "Notes"} <kbd>↵</kbd>
               </button>
               <Link href="/resume/" onClick={() => setMenu(null)}>
                 Print résumé…
@@ -133,7 +137,13 @@ export default function MacMenuBar({
           )}
           {menu === "Edit" && (
             <button onClick={() => run(onFind)}>
-              Find in Notes… <kbd>⌘F</kbd>
+              {appName === "Terminal" ? (
+                "Focus Command Line"
+              ) : (
+                <>
+                  Find in Notes… <kbd>⌘F</kbd>
+                </>
+              )}
             </button>
           )}
           {menu === "View" && (
@@ -146,8 +156,12 @@ export default function MacMenuBar({
           )}
           {menu === "Window" && (
             <>
-              <button onClick={() => run(onClose)}>Minimize</button>
-              <button onClick={() => run(onOpen)}>Bring Notes to Front</button>
+              <button onClick={() => run(onMinimize ?? onClose)}>
+                Minimize
+              </button>
+              <button onClick={() => run(onOpen)}>
+                Bring {appName ?? "Notes"} to Front
+              </button>
               <button onClick={() => run(onExpand)}>Zoom</button>
             </>
           )}

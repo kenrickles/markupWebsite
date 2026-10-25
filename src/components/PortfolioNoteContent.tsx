@@ -2,11 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { experiences, education } from "@/lib/profile";
-import {
-  certifications,
-  recoveredRecognition,
-} from "@/lib/recoveredProfile";
+import { certifications, recoveredRecognition } from "@/lib/recoveredProfile";
 import { assetPath } from "@/lib/site";
+import { introduction } from "@/lib/introduction";
 export type PortfolioNote = "about" | "experience" | "education" | "contact";
 /** User-written introduction and recovered resume details, with later roles retained. */
 export default function PortfolioNoteContent({
@@ -19,11 +17,8 @@ export default function PortfolioNoteContent({
   if (active === "about")
     return (
       <>
-        <p className="intro-lead">
-          I build the platforms behind the product. From resilient infrastructure
-          to practical AI, I turn engineering complexity into something teams can use.
-        </p>
-        <h1>Kenrick Tan</h1>
+        <p className="intro-lead">{introduction.lead}</p>
+        <h1>{introduction.name}</h1>
         <Image
           className="note-portrait"
           src={assetPath("/kenrick.jpg")}
@@ -33,32 +28,13 @@ export default function PortfolioNoteContent({
           priority
         />
         <h2>
-          I think in systems.
+          {introduction.heading[0]}
           <br />
-          I build for people.
+          {introduction.heading[1]}
         </h2>
-        <p>
-          I’m Kenrick, a Protocol Engineer at Galaxy Digital. My work sits at the
-          intersection of blockchain, digital assets, infrastructure, and developer experience.
-        </p>
-        <p>
-          Before engineering, I studied psychology and communications. That
-          perspective stays with me: understand the people, ask better questions,
-          then build the right thing.
-        </p>
-        <p>
-          I aspire to be a Renaissance developer, drawing on different disciplines
-          to become a better engineer. I value T-shaped thinking: building depth in
-          my craft while staying curious about the fields around it.
-        </p>
-        <p>
-          Omotenashi (おもてなし) and kaizen (改善) shape how I approach the work:
-          anticipate people’s needs, care about the details, and keep making small improvements.
-        </p>
-        <p>
-          I also believe in paying it forward. People have helped me along the way
-          by sharing what they know. I try to do the same.
-        </p>
+        {introduction.paragraphs.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
         <div className="note-bottom-links">
           <button onClick={() => select("experience")}>
             Work experience <ArrowUpRight size={14} />

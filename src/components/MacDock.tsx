@@ -28,10 +28,12 @@ export default function MacDock({
   onAction,
   opened,
   active,
+  terminalRunning = false,
 }: {
   onAction: (action: Action) => void;
   opened: boolean;
   active: string;
+  terminalRunning?: boolean;
 }) {
   const dock = useRef<HTMLElement>(null);
   const [scales, setScales] = useState<number[]>([]);
@@ -82,7 +84,11 @@ export default function MacDock({
             </span>
             <i
               className={
-                opened && (app.icon === "notes" || app.action === active)
+                (
+                  app.icon === "terminal"
+                    ? terminalRunning
+                    : opened && (app.icon === "notes" || app.action === active)
+                )
                   ? "dock-active"
                   : ""
               }

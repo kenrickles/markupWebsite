@@ -20,6 +20,8 @@ import {
 } from "@/lib/recoveredProfile";
 import AgentMessages from "./AgentMessages";
 import { assetPath } from "@/lib/site";
+import { terminalLinks, type TerminalTarget } from "@/lib/terminal";
+import { useRouter } from "next/navigation";
 import MacIcon from "./MacIcons";
 import MacDock from "./MacDock";
 import MacMenuBar from "./MacMenuBar";
@@ -82,10 +84,15 @@ export default function DesktopPortfolio() {
   const [compactList, setCompactList] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const router = useRouter();
   const [terminalOpen, setTerminalOpen] = useState(false);
+  const [terminalMinimized, setTerminalMinimized] = useState(false);
+  const [terminalExpanded, setTerminalExpanded] = useState(false);
   const [messagesOpen, setMessagesOpen] = useState(false);
   const [messagesMinimized, setMessagesMinimized] = useState(false);
-  const [frontApp, setFrontApp] = useState<"notes" | "messages">("notes");
+  const [frontApp, setFrontApp] = useState<"notes" | "messages" | "terminal">(
+    "notes",
+  );
   const { setTheme } = useTheme();
   const [history, setHistory] = useState<Note[]>(["about"]);
   const [cursor, setCursor] = useState(0);
@@ -246,6 +253,58 @@ export default function DesktopPortfolio() {
       document.getElementById("notes-search")?.focus(),
     );
   };
+  const openMessages = () => {
+    setMessagesOpen(true);
+    setMessagesMinimized(false);
+    setFrontApp("messages");
+  };
+  const openTerminal = () => {
+    setTerminalOpen(true);
+    setTerminalMinimized(false);
+    setFrontApp("terminal");
+  };
+  const closeTerminal = () => {
+    setTerminalOpen(false);
+    setTerminalMinimized(false);
+    setFrontApp("notes");
+  };
+  const minimizeTerminal = () => {
+    setTerminalMinimized(true);
+    setFrontApp("notes");
+  };
+  const terminalTarget = (target: TerminalTarget) => {
+    if (target === "messages") openMessages();
+    else if (
+      target === "about" ||
+      target === "experience" ||
+      target === "education" ||
+      target === "contact"
+    ) {
+      setQuery("");
+      select(target);
+    } else if (target === "resume") router.push(terminalLinks.resume);
+    else window.open(terminalLinks[target], "_blank", "noopener,noreferrer");
+  };
+  useEffect(() => {
+    const show = () => {
+      setTerminalOpen(true);
+      setTerminalMinimized(false);
+      setFrontApp("terminal");
+    };
+    const key = (event: KeyboardEvent) => {
+      if (document.querySelector("dialog[open]")) return;
+      if ((event.metaKey || event.ctrlKey) && event.code === "Backquote") {
+        event.preventDefault();
+        show();
+      }
+    };
+    window.addEventListener("open-terminal", show);
+    window.addEventListener("keydown", key);
+    return () => {
+      window.removeEventListener("open-terminal", show);
+      window.removeEventListener("keydown", key);
+    };
+  }, []);
   return (
     <main className={`desktop-portfolio${night ? " desktop-night" : ""}`}>
       <a className="desktop-skip" href="#note-content">
@@ -253,24 +312,54 @@ export default function DesktopPortfolio() {
       </a>
       <MacMenuBar
         appName={
-          frontApp === "messages" && messagesOpen && !messagesMinimized
-            ? "Messages"
-            : opened
-              ? "Notes"
-              : "Finder"
+          frontApp === "terminal" && terminalOpen && !terminalMinimized
+            ? "Terminal"
+            : frontApp === "messages" && messagesOpen && !messagesMinimized
+              ? "Messages"
+              : opened
+                ? "Notes"
+                : "Finder"
         }
         opened={opened}
         night={night}
         clock={clock}
         onToggleTheme={toggleTheme}
         onAbout={() => setAboutOpen(true)}
-        onOpen={openIntroduction}
-        onClose={() => setOpened(false)}
-        onExpand={() => {
-          setOpened(true);
-          toggleExpanded();
+        onOpen={
+          frontApp === "terminal"
+            ? openTerminal
+            : frontApp === "messages"
+              ? openMessages
+              : openIntroduction
+        }
+        onClose={() => {
+          if (frontApp === "terminal") closeTerminal();
+          else if (frontApp === "messages") {
+            setMessagesOpen(false);
+            setFrontApp("notes");
+          } else setOpened(false);
         }}
-        onFind={findNotes}
+        onMinimize={() => {
+          if (frontApp === "terminal") minimizeTerminal();
+          else if (frontApp === "messages") {
+            setMessagesMinimized(true);
+            setFrontApp("notes");
+          } else setOpened(false);
+        }}
+        onExpand={() => {
+          if (frontApp === "terminal") setTerminalExpanded((value) => !value);
+          else if (frontApp === "messages")
+            window.dispatchEvent(new Event("zoom-messages"));
+          else {
+            setOpened(true);
+            toggleExpanded();
+          }
+        }}
+        onFind={() => {
+          if (frontApp === "terminal")
+            window.dispatchEvent(new Event("focus-terminal-input"));
+          else findNotes();
+        }}
       />
       <nav className="desktop-files" aria-label="Desktop shortcuts">
         <Link href="/resume/">
@@ -448,14 +537,19 @@ export default function DesktopPortfolio() {
       )}
       <MacDock
         opened={opened}
-        active={frontApp === "messages" && messagesOpen ? "messages" : active}
+        active={
+          frontApp === "terminal" && terminalOpen
+            ? "terminal"
+            : frontApp === "messages" && messagesOpen
+              ? "messages"
+              : active
+        }
+        terminalRunning={terminalOpen}
         onAction={(action) => {
           if (action === "messages") {
-            setMessagesOpen(true);
-            setMessagesMinimized(false);
-            setFrontApp("messages");
+            openMessages();
           } else if (action === "settings") setSettingsOpen(true);
-          else if (action === "terminal") setTerminalOpen(true);
+          else if (action === "terminal") openTerminal();
           else {
             setQuery("");
             select(action);
@@ -524,7 +618,21 @@ export default function DesktopPortfolio() {
           </div>
         </Modal>
       )}
-      {terminalOpen && <TerminalShell onClose={() => setTerminalOpen(false)} />}
+      <TerminalShell
+        visible={terminalOpen && !terminalMinimized}
+        front={frontApp === "terminal"}
+        expanded={terminalExpanded}
+        theme={night ? "dark" : "light"}
+        onFocus={() => setFrontApp("terminal")}
+        onClose={closeTerminal}
+        onMinimize={minimizeTerminal}
+        onExpand={() => setTerminalExpanded((value) => !value)}
+        onTheme={(theme) => {
+          setNight(theme === "dark");
+          setTheme(theme);
+        }}
+        onOpen={terminalTarget}
+      />
       <noscript>
         <div className="desktop-noscript">
           Read my <Link href="/resume/">complete résumé</Link>.
