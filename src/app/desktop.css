@@ -874,6 +874,7 @@
 }
 .desktop-noscript {
   position: absolute;
+  z-index: 6;
   bottom: 100px;
   left: 15px;
   padding: 10px;
