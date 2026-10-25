@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { experiences, education, awards } from "@/lib/profile";
-import { caseStudies } from "@/lib/caseStudies";
+import { experiences, education } from "@/lib/profile";
+import {
+  recoveredHome,
+  certifications,
+  recoveredRecognition,
+} from "@/lib/recoveredProfile";
 import { assetPath } from "@/lib/site";
-export type PortfolioNote =
-  "about" | "experience" | "projects" | "education" | "contact";
-/** Existing professional content retained while the original Hugo content source is unresolved. */
+export type PortfolioNote = "about" | "experience" | "education" | "contact";
+/** Original Hugo intro and resume details recovered; later engineering roles retained. */
 export default function PortfolioNoteContent({
   active,
   select,
@@ -17,13 +20,7 @@ export default function PortfolioNoteContent({
   if (active === "about")
     return (
       <>
-        <h1>Hi, I’m Kenrick.</h1>
-        <p className="intro-lead">Complex systems. Clear thinking.</p>
-        <p>
-          I build the platforms behind the product. From resilient
-          infrastructure to practical AI, I turn engineering complexity into
-          something teams can use.
-        </p>
+        <h1>{recoveredHome.title}</h1>
         <Image
           className="note-portrait"
           src={assetPath("/kenrick.jpg")}
@@ -32,39 +29,19 @@ export default function PortfolioNoteContent({
           height={96}
           priority
         />
-        <h2>
-          I think in systems.
-          <br />I build for people.
-        </h2>
+        <p className="intro-lead">{recoveredHome.subtitle}</p>
         <p>
-          I’m Kenrick, a Protocol Engineer at Galaxy Digital. My work sits at
-          the intersection of digital assets, infrastructure, and developer
-          experience.
+          I’m a Protocol Engineer at Galaxy Digital, working on platform and
+          infrastructure engineering for digital assets. I’m also an AI
+          Champion, exploring practical applications of AI in engineering
+          workflows.
         </p>
-        <p>
-          I’ve helped teams move CI/CD platforms, operate Kubernetes
-          environments, and build internal AI tooling. The common thread: making
-          complicated work more dependable and easier to do.
-        </p>
-        <p>
-          Before engineering, I studied psychology and communications. That
-          perspective stays with me: understand the people, ask better
-          questions, then build the right thing.
-        </p>
-        <ul className="note-facts">
-          <li>
-            <strong>40+</strong> Clusters across 7 environments at Partior
-          </li>
-          <li>
-            <strong>250</strong> Projects in a CI/CD migration at Versent
-          </li>
-        </ul>
         <div className="note-bottom-links">
-          <button onClick={() => select("projects")}>
-            Explore my work <ArrowUpRight size={14} />
+          <button onClick={() => select("experience")}>
+            Work experience <ArrowUpRight size={14} />
           </button>
           <button onClick={() => select("contact")}>
-            Let’s talk <ArrowUpRight size={14} />
+            Get in touch <ArrowUpRight size={14} />
           </button>
         </div>
       </>
@@ -104,38 +81,6 @@ export default function PortfolioNoteContent({
         </Link>
       </>
     );
-  if (active === "projects")
-    return (
-      <>
-        <h1>Selected work</h1>
-        <h2>Built for the real world.</h2>
-        <p>
-          Release systems, developer platforms, and tooling for the people who
-          run them.
-        </p>
-        <div className="desktop-projects">
-          {caseStudies.map((study) => (
-            <section key={study.slug}>
-              <h2>
-                <Link href={`/case-studies/${study.slug}/`}>{study.title}</Link>
-              </h2>
-              <p>{study.subtitle}</p>
-              <div className="note-tags">
-                {study.stack.slice(0, 3).map((t) => (
-                  <span key={t}>{t}</span>
-                ))}
-              </div>
-              <Link
-                className="note-text-link"
-                href={`/case-studies/${study.slug}/`}
-              >
-                Read case study <ArrowUpRight size={13} />
-              </Link>
-            </section>
-          ))}
-        </div>
-      </>
-    );
   if (active === "education")
     return (
       <>
@@ -150,12 +95,32 @@ export default function PortfolioNoteContent({
             ))}
           </section>
         ))}
-        <h2>Recognition</h2>
-        <ul>
-          {awards.map((a) => (
-            <li key={a}>{a}</li>
-          ))}
-        </ul>
+        <h2>Certifications</h2>
+        {certifications.map((c) => (
+          <section className="education-entry" key={c.title}>
+            <h2>{c.title}</h2>
+            <p>
+              {c.organization} · {c.timeframe}
+            </p>
+            <a href={c.href} target="_blank" rel="noreferrer">
+              Verify Certification ↗
+            </a>
+          </section>
+        ))}
+        <h2>Awards</h2>
+        {recoveredRecognition.map((a) => (
+          <section className="education-entry" key={a.title}>
+            <h2>{a.title}</h2>
+            <p>
+              {a.organization} · {a.timeframe}
+            </p>
+            <ul>
+              {a.highlights.map((h) => (
+                <li key={h}>{h}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </>
     );
   return (

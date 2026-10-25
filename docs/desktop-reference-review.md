@@ -29,6 +29,8 @@ The earlier editorial biography is replaced with professional copy from `markupW
 
 The user first supplied `kenrickles/portfolio` as a content source, then explicitly corrected it to `kenrickles/Loveit`. The former migration was discarded before publication. The Loveit repository has one `master` branch, generic theme config (`My cool site`) and the theme’s example About LoveIt documentation, not Kenrick’s personal résumé pages. Theme/demo content is not treated as personal information. Existing career details remain until the intended original Hugo content is supplied. The existing career information is also consistent with the available June 2024 resume; that private document and its phone number are not published as assets.
 
+**Resolved in the subsequent content update:** the user supplied the original site preserved in `Gmar1289/personalSite` at commit `b0a70ff3b1c44ddf02b26b6f88e10b4b80f33802`. Its config and résumé are now imported, Selected Work is removed, and Messages is adapted into a separate fictional agent-chat app. See `docs/recovered-content.md`; this later record supersedes the unresolved-content status and initial Messages/case-study choices above.
+
 ## Verification targets
 
 Production build and type checking; root and project-base static exports; desktop and phone rendering; no horizontal clipping; note search/history; full project links; menu outside-click/Escape; About dialog focus/close; appearance controls; dock links; dragging/resizing; reduced motion; blocked storage; printable résumé and no-JavaScript fallback.

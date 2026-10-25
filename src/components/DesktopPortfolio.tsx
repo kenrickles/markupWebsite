@@ -13,7 +13,12 @@ import {
   X,
 } from "lucide-react";
 import { experiences, education, awards } from "@/lib/profile";
-import { caseStudies } from "@/lib/caseStudies";
+import {
+  recoveredHome,
+  certifications,
+  recoveredRecognition,
+} from "@/lib/recoveredProfile";
+import AgentMessages from "./AgentMessages";
 import { assetPath } from "@/lib/site";
 import MacIcon from "./MacIcons";
 import MacDock from "./MacDock";
@@ -34,11 +39,10 @@ const notes: {
 }[] = [
   {
     id: "about",
-    title: "Hi, I’m Kenrick.",
+    title: recoveredHome.title,
     preview: "Protocol Engineer at Galaxy Digital",
     category: "Pinned",
-    search:
-      "Complex systems. Clear thinking. I think in systems. I build for people. psychology communications 40+ 250",
+    search: recoveredHome.subtitle,
   },
   {
     id: "experience",
@@ -48,18 +52,16 @@ const notes: {
     search: JSON.stringify(experiences),
   },
   {
-    id: "projects",
-    title: "Selected work",
-    preview: "Release systems, developer platforms, and tooling",
-    category: "Work",
-    search: JSON.stringify(caseStudies),
-  },
-  {
     id: "education",
     title: "Education & recognition",
     preview: "Rocket Academy · Singapore Management University",
     category: "Personal",
-    search: JSON.stringify([education, awards]),
+    search: JSON.stringify([
+      education,
+      awards,
+      certifications,
+      recoveredRecognition,
+    ]),
   },
   {
     id: "contact",
@@ -81,6 +83,9 @@ export default function DesktopPortfolio() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
+  const [messagesOpen, setMessagesOpen] = useState(false);
+  const [messagesMinimized, setMessagesMinimized] = useState(false);
+  const [frontApp, setFrontApp] = useState<"notes" | "messages">("notes");
   const { setTheme } = useTheme();
   const [history, setHistory] = useState<Note[]>(["about"]);
   const [cursor, setCursor] = useState(0);
@@ -183,7 +188,7 @@ export default function DesktopPortfolio() {
     const fromHash = () => {
       const aliases: Record<string, Note> = {
         about: "about",
-        projects: "projects",
+        projects: "about",
         experience: "experience",
         contact: "contact",
         education: "education",
@@ -205,6 +210,7 @@ export default function DesktopPortfolio() {
   }, []);
   const select = (id: Note) => {
     setOpened(true);
+    setFrontApp("notes");
     setCompactList(false);
     if (id !== active) {
       setHistory([...history.slice(0, cursor + 1), id]);
@@ -246,6 +252,13 @@ export default function DesktopPortfolio() {
         Skip to content
       </a>
       <MacMenuBar
+        appName={
+          frontApp === "messages" && messagesOpen && !messagesMinimized
+            ? "Messages"
+            : opened
+              ? "Notes"
+              : "Finder"
+        }
         opened={opened}
         night={night}
         clock={clock}
@@ -260,10 +273,6 @@ export default function DesktopPortfolio() {
         onFind={findNotes}
       />
       <nav className="desktop-files" aria-label="Desktop shortcuts">
-        <button onClick={() => select("projects")}>
-          <MacIcon name="folder" />
-          <span>Selected work</span>
-        </button>
         <Link href="/resume/">
           <MacIcon name="document" />
           <span>Kenrick — Résumé</span>
@@ -272,7 +281,8 @@ export default function DesktopPortfolio() {
       {opened ? (
         <section
           ref={windowRef}
-          className={`notes-window${expanded ? " notes-expanded" : ""}`}
+          className={`notes-window${expanded ? " notes-expanded" : ""}${frontApp === "notes" ? " front-window" : ""}`}
+          onPointerDownCapture={() => setFrontApp("notes")}
           aria-label="Portfolio notes"
         >
           <header
@@ -421,11 +431,30 @@ export default function DesktopPortfolio() {
           <span>Open Notes</span>
         </button>
       )}
+      {messagesOpen && (
+        <AgentMessages
+          minimized={messagesMinimized}
+          front={frontApp === "messages"}
+          onFocus={() => setFrontApp("messages")}
+          onClose={() => {
+            setMessagesOpen(false);
+            setFrontApp("notes");
+          }}
+          onMinimize={() => {
+            setMessagesMinimized(true);
+            setFrontApp("notes");
+          }}
+        />
+      )}
       <MacDock
         opened={opened}
-        active={active}
+        active={frontApp === "messages" && messagesOpen ? "messages" : active}
         onAction={(action) => {
-          if (action === "settings") setSettingsOpen(true);
+          if (action === "messages") {
+            setMessagesOpen(true);
+            setMessagesMinimized(false);
+            setFrontApp("messages");
+          } else if (action === "settings") setSettingsOpen(true);
           else if (action === "terminal") setTerminalOpen(true);
           else {
             setQuery("");

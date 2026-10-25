@@ -1188,3 +1188,308 @@
   color: #fff;
   border-color: #ffffff26;
 }
+/* Messages: adapted from the reference conversation-list and iMessage-bubble layout. */
+.notes-window {
+  z-index: 2;
+}
+.notes-window.front-window {
+  z-index: 4;
+}
+.desktop-dock {
+  z-index: 8;
+}
+.agent-messages-window {
+  left: calc(9% + 70px);
+  top: 15%;
+  width: min(760px, calc(100% - 190px));
+  height: min(540px, calc(100% - 180px));
+}
+.agent-messages-window[hidden] {
+  display: none;
+}
+.agent-messages-window.notes-expanded {
+  left: 12px;
+  top: 40px;
+  width: calc(100% - 24px);
+  height: calc(100% - 140px);
+}
+.agent-messages-layout {
+  height: calc(100% - 39px);
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  min-height: 0;
+}
+.agent-conversations {
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+  padding: 8px;
+  scrollbar-width: thin;
+}
+.agent-conversation-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 8px 5px 12px;
+}
+.agent-conversation {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 11px 8px;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  position: relative;
+  margin: 0 0 4px;
+  min-width: 0;
+}
+.agent-conversation > span:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+}
+.agent-conversation strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  padding-right: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agent-conversation small {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.agent-conversation time {
+  font-size: 8px;
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  opacity: 0.6;
+}
+.agent-conversation:hover {
+  background: #00000008;
+}
+.agent-conversation-selected,
+.agent-conversation-selected:hover {
+  background: #007aff;
+  color: white !important;
+}
+.agent-conversation-selected small {
+  color: #ffffffcc;
+}
+.agent-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: inset 0 -9px 16px #0001;
+}
+.agent-avatar-small {
+  width: 26px;
+  height: 26px;
+  font-size: 9px;
+}
+.agent-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--paper);
+}
+.agent-chat-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  min-height: 60px;
+}
+.agent-chat-header h2 {
+  font-size: 12px;
+  line-height: 1.3;
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+.agent-chat-header p {
+  font-size: 9px;
+  margin: 3px 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.agent-chat-back {
+  display: none;
+  background: none;
+  color: var(--link) !important;
+  padding: 5px;
+}
+.agent-thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  padding: 13px 18px;
+  scrollbar-width: thin;
+  scrollbar-color: #8885 transparent;
+}
+.agent-thread-date {
+  text-align: center;
+  color: var(--muted);
+  font-size: 10px;
+  margin: 0 0 12px;
+}
+.agent-message-group {
+  display: flex;
+  flex-direction: column;
+  max-width: 78%;
+  margin: 2px 0;
+}
+.agent-message-mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.agent-message-theirs {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+.agent-message-gap {
+  margin-top: 10px;
+}
+.agent-speaker {
+  font-size: 9px;
+  color: var(--muted);
+  margin: 0 0 3px 11px;
+}
+.agent-bubble {
+  padding: 8px 13px;
+  border-radius: 17px;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: anywhere;
+  background: #e9e9eb;
+  color: #111;
+}
+.agent-message-mine .agent-bubble {
+  background: #007aff;
+  color: white;
+}
+.agent-delivered {
+  font-size: 9px;
+  text-align: right;
+  color: var(--muted);
+  margin: 5px 4px 0;
+}
+.agent-composer {
+  padding: 10px 16px 8px;
+  border-top: 1px solid var(--line);
+}
+.agent-composer input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  background: transparent;
+  color: var(--muted);
+  line-height: 18px;
+}
+.agent-composer > span {
+  display: block;
+  text-align: center;
+  font-size: 8px;
+  color: var(--muted);
+  padding-top: 5px;
+}
+.desktop-night .agent-bubble {
+  background: #3b3b3d;
+  color: white;
+}
+.desktop-night .agent-message-mine .agent-bubble {
+  background: #007aff;
+}
+.desktop-night .agent-conversation:hover {
+  background: #ffffff0d;
+}
+.desktop-night .agent-conversation-selected,
+.desktop-night .agent-conversation-selected:hover {
+  background: #007aff;
+}
+@container (max-width:560px) {
+  .agent-messages-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .agent-chat {
+    display: none;
+  }
+  .compact-show-thread .agent-conversations {
+    display: none;
+  }
+  .compact-show-thread .agent-chat {
+    display: flex;
+  }
+  .agent-chat-back {
+    display: flex;
+    position: absolute;
+    left: 9px;
+    top: 15px;
+  }
+  .agent-conversations {
+    border: 0;
+  }
+  .agent-conversation {
+    padding: 14px 10px;
+  }
+  .agent-conversation strong {
+    font-size: 13px;
+  }
+  .agent-conversation time {
+    top: 8px;
+  }
+}
+@media (max-width: 640px) {
+  .agent-messages-window,
+  .agent-messages-window.notes-expanded {
+    left: 8px;
+    top: 40px;
+    width: calc(100% - 16px);
+    height: calc(100% - 132px);
+    min-height: 300px;
+  }
+  .agent-messages-layout {
+    height: calc(100% - 36px);
+  }
+  .agent-chat-header {
+    padding-left: 43px;
+    justify-content: flex-start;
+  }
+  .agent-chat-header p {
+    font-size: 8px;
+  }
+  .agent-thread {
+    padding: 12px;
+  }
+  .agent-message-group {
+    max-width: 84%;
+  }
+}
