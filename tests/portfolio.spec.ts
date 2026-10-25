@@ -19,10 +19,10 @@ test("recovered introduction, work history, and chronology render without errors
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Hello, I'm Kenrick",
+    "Kenrick Tan",
   );
   await expect(page.locator(".note-content")).toContainText(
-    "I desire to be a T-shaped problem solver and believe in paying it forward.",
+    "I value T-shaped thinking: building depth in my craft while staying curious about the fields around it.",
   );
   await expect(page.getByRole("img", { name: "Kenrick Tan" })).toBeVisible();
   await expect(page.getByText("Selected work", { exact: true })).toHaveCount(0);
@@ -41,7 +41,7 @@ test("recovered introduction, work history, and chronology render without errors
   await expect(page.locator(".desktop-experience")).toContainText("S$356,000");
   await page.getByRole("button", { name: "Previous note" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Hello, I'm Kenrick",
+    "Kenrick Tan",
   );
   await page.getByRole("button", { name: "Next note" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
@@ -98,7 +98,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     })
     .click();
   await expect(messages.getByRole("log")).toContainText(
-    "am i building a website or funding a pyramid scheme",
+    "remove the roadmap. add the website.",
   );
   await expect(messages).toContainText("Fictional conversations");
   const back = messages.getByRole("button", {
@@ -113,7 +113,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     })
     .click();
   await expect(messages.getByRole("log")).toContainText(
-    "Opening the dissertation.",
+    "i’m leaning towards unplugging you",
   );
   await expect(messages.getByRole("textbox")).toBeDisabled();
   await messages
@@ -125,7 +125,7 @@ test("Messages is a separate fictional agent conversation app", async ({
     .click();
   await expect(messages).toBeVisible();
   await expect(messages.getByRole("log")).toContainText(
-    "Opening the dissertation.",
+    "i’m leaning towards unplugging you",
   );
   await messages
     .getByRole("button", { name: "Close Messages", exact: true })
@@ -260,7 +260,7 @@ test("resume remains accessible without JavaScript", async ({
   const page = await context.newPage();
   await page.goto(baseURL!);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Hello, I'm Kenrick",
+    "Kenrick Tan",
   );
   await page.getByRole("link", { name: "Open résumé", exact: true }).click();
   await expect(
