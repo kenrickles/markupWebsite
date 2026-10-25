@@ -1,3 +1,11 @@
+## Desktop résumé portfolio
+
+The homepage is a macOS-inspired Notes workspace with original styling and Kenrick’s existing profile content. It includes searchable notes, work history, project summaries, education, contact links, a dock, and a printable `/resume/` page. Desktop windows support title-bar dragging, corner resizing, maximize/restore, and close/minimize. Phones use scrollable note tabs and a fixed compact layout. The menu-bar clock uses Singapore time; motion respects reduced-motion preferences.
+
+Design reference: [Vanessa Li’s personal website](https://vanessa-li.com) and [public source](https://github.com/VANESSA123LI/personalwebsite). The implementation, styling, icons, and content here are independently written for this portfolio.
+
+Profile data lives in `src/lib/profile.ts`; homepage note and project copy lives in `src/components/DesktopPortfolio.tsx`; scoped desktop styling lives in `src/app/desktop.css`. Existing résumé and case-study routes remain available.
+
 # Kenrick Tan · Portfolio
 
 A static Next.js portfolio for kenrickles.com, with GSAP/Lenis motion, dark and light themes, a command palette, an interactive simulated terminal, case studies, and a printable résumé.

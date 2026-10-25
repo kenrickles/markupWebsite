@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import ThemeProvider from "@/components/ThemeProvider";
 import "./globals.css";
+import "./desktop.css";
 import localFont from "next/font/local";
 import { SITE_URL } from "@/lib/site";
 const geist = localFont({
