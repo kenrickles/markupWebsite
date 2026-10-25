@@ -26,6 +26,6 @@ Remove the Selected Work note, folder shortcut, Finder-to-projects action, case-
 
 `AgentMessages.tsx` adapts the reference `app/desktop/apps/Messages.tsx` structure into a separate native-looking window. It retains conversation selection, a 224 px list, blue/grey bubbles, grouped sender labels, automatic latest-message scrolling, and list/thread navigation in compact windows. It adds close/minimize/restore, zoom, dragging, corner resizing, and focus stacking with Notes.
 
-`src/lib/agentConversations.ts` contains three fictional, scripted exchanges: The agent group chat, Research Agent, and Deploy Agent. They are humor written for this portfolio, not real private transcripts or live AI integrations. The composer is disabled and the UI identifies the content as fictional. The mail icon and contact note retain real contact links.
+`src/lib/agentConversations.ts` contains four fictional, scripted exchanges: The agent group chat, Research Agent, Renovation Agent, and Deploy Agent. They are humor written for this portfolio, not real private transcripts or live AI integrations. The composer is disabled and the UI identifies the content as fictional. The mail icon and contact note retain real contact links.
 
 Validation includes recovered copy and historical roles, Galaxy retention, certification links, obsolete route 404/sitemap removal, Notes navigation, Messages thread switching and minimize/restore, native panel geometry, compact layouts, blocked storage, reduced motion, and no-JavaScript résumé access.
