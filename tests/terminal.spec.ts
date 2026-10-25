@@ -161,9 +161,9 @@ test("window controls preserve session and cooperate with Notes and Messages", a
   await openTerminal(page);
   await expect(terminal).toHaveClass(/front-window/);
   await command(page, "open experience");
-  await expect(
-    page.getByRole("region", { name: "Portfolio notes" }),
-  ).toHaveClass(/front-window/);
+  await expect(page.getByRole("region", { name: "Safari" })).toHaveClass(
+    /front-window/,
+  );
   await expect(
     page.getByRole("heading", { name: "Galaxy Digital", exact: true }),
   ).toBeVisible();
@@ -262,7 +262,7 @@ test("touch starters, appearance, reduced motion and resume routing", async ({
     fullPage: true,
   });
   await command(page, "open resume");
-  await expect(page).toHaveURL(/\/resume\/$/);
+  await expect(page).toHaveURL(/#safari\/resume$/);
   await expect(
     page.getByRole("heading", { name: "Kenrick Tan", exact: true }),
   ).toBeVisible();

@@ -71,3 +71,21 @@ To deploy under a subpath, set `NEXT_PUBLIC_BASE_PATH` and `NEXT_PUBLIC_SITE_URL
 ## License and attribution
 
 This is a personal portfolio project. Third-party asset and dependency notices are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Desktop applications
+
+Safari opens on Overview and contains the professional profile, experience, projects and résumé. Notes is reserved for published writing. Reminders displays a read-only public roadmap, while Finder holds personally curated recommendations. Terminal can open each application with `projects`, `writing`, `roadmap`, `tools`, and `open resume`.
+
+- Write Markdown in `content/writing/`. See its README for metadata and publishing instructions. Only `status: published` reaches the website; drafts remain visible in this public repository.
+- Maintain aspirations in `src/lib/roadmap.ts` and recommendations in `src/lib/recommendations.ts`. No recommendations have been invented for the initial release.
+- Published writing gets a standalone `/writing/<slug>/` page, a Notes reader view, and a sitemap entry. The desktop automatically highlights the newest published piece.
+- `/resume/` and Safari share `ResumeContent.tsx`. A committed PDF lives at `public/kenrick-tan-resume.pdf`. Refresh it when profile data changes:
+
+```bash
+node scripts/export-resume-data.mjs > /tmp/kenrick-resume.json
+python3 scripts/generate-resume-pdf.py /tmp/kenrick-resume.json public/kenrick-tan-resume.pdf
+```
+
+PDF generation requires Python `reportlab` and DejaVu Sans fonts (paths are specified in the generator). Normal site builds do not require Python. Review the PDF after refreshing it.
+
+Deep links such as `/#safari/experience`, `/#notes`, `/#reminders` and `/#finder` open the corresponding application. Existing `#about`, `#experience`, `#education`, `#projects` and `#contact` links remain accepted.

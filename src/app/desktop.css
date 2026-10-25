@@ -1712,3 +1712,1162 @@
     display: none;
   }
 }
+
+/* Independent applications, with Safari as the professional front door. */
+.application-window[hidden] {
+  display: none;
+}
+.application-window {
+  width: min(940px, calc(100% - 190px));
+  height: min(680px, calc(100% - 165px));
+}
+.application-window .app-titlebar {
+  height: 42px;
+  flex-shrink: 0;
+}
+.application-window .traffic-lights {
+  top: 15px;
+}
+.app-workspace {
+  height: calc(100% - 42px);
+  min-height: 0;
+}
+.application-window.notes-expanded {
+  left: 12px;
+  top: 40px;
+  width: calc(100% - 24px);
+  height: calc(100% - 140px);
+}
+.application-window .window-resize {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 60%,
+    #8885 60%,
+    #8885 67%,
+    transparent 67%,
+    transparent 78%,
+    #8885 78%,
+    #8885 85%,
+    transparent 85%
+  );
+  cursor: nwse-resize;
+}
+.application-window:not(.front-window) {
+  filter: saturate(0.8);
+}
+.safari-window {
+  left: 7%;
+  top: 8%;
+  width: min(1040px, calc(100% - 200px));
+  height: min(740px, calc(100% - 165px));
+}
+.safari-window .app-titlebar {
+  height: 62px;
+  background: var(--chrome);
+}
+.safari-window .traffic-lights {
+  top: 25px;
+  left: 18px;
+}
+.safari-window .app-workspace {
+  height: calc(100% - 62px);
+  display: flex;
+  flex-direction: column;
+}
+.safari-toolbar {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 146px minmax(100px, 1fr) 54px;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px 0 93px;
+}
+.safari-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.safari-toolbar button {
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: var(--muted);
+  padding: 4px;
+  border-radius: 5px;
+}
+.safari-toolbar button:hover {
+  background: var(--line);
+}
+.safari-address {
+  justify-self: center;
+  width: min(100%, 430px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  box-shadow:
+    0 1px 2px #0000000a,
+    inset 0 0 0 1px #00000005;
+  background: #00000006;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.safari-address svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.safari-path {
+  color: var(--muted);
+}
+.safari-share {
+  justify-self: end;
+}
+.safari-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 0 8px;
+  min-height: 38px;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--line);
+}
+.safari-tabs button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 9px 10px;
+  font-size: 12px;
+  background: #00000004;
+  border-radius: 7px 7px 0 0;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+}
+.safari-tabs button[aria-selected="true"] {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 -1px 3px #00000007;
+}
+.safari-favicon {
+  font-size: 10px;
+  font-weight: 700;
+  background: #4e6878;
+  color: #fff;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+}
+.safari-browser {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.safari-sidebar {
+  width: 190px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+  padding: 20px 12px;
+}
+.safari-sidebar p {
+  margin: 0 8px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.safari-sidebar a,
+.safari-sidebar button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+  padding: 10px 8px;
+  border-radius: 5px;
+  background: transparent;
+}
+.safari-sidebar a:hover,
+.safari-sidebar button:hover {
+  background: var(--line);
+}
+.safari-page {
+  background: var(--paper);
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.profile-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 38px;
+  border-bottom: 1px solid var(--line);
+  gap: 20px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.profile-masthead > span:first-child {
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.12em;
+}
+.safari-page-content {
+  max-width: 740px;
+  padding: 42px 44px 24px;
+  margin: auto;
+}
+.profile-kicker {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 23px;
+}
+.safari-page h1 {
+  font-size: 32px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin: 0 0 24px;
+}
+.safari-page h2 {
+  font-size: 22px;
+  font-weight: 550;
+  line-height: 1.35;
+  margin: 25px 0 16px;
+  letter-spacing: -0.025em;
+}
+.safari-page p {
+  font-size: 14px;
+  line-height: 1.85;
+  margin: 0 0 18px;
+  color: var(--ink);
+}
+.profile-overview {
+  display: flow-root;
+}
+.profile-overview .intro-lead {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.profile-overview h1 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 28px 0 14px;
+  color: var(--muted);
+}
+.profile-overview h2 {
+  margin-top: 0;
+  font-size: clamp(28px, 4.4cqw, 42px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+.profile-overview .note-portrait {
+  float: right;
+  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  margin: 0 0 15px 22px;
+}
+.profile-overview .note-bottom-links {
+  margin-top: 25px;
+}
+.safari-page .note-bottom-links button {
+  background: transparent;
+  color: var(--link);
+  padding: 0;
+  font-size: 12px;
+}
+.safari-page a.profile-link,
+.safari-page .note-text-link {
+  color: var(--link);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  margin: 12px 0;
+}
+.writing-invitation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  background: transparent;
+  border-top: 1px solid var(--line) !important;
+  border-bottom: 1px solid var(--line) !important;
+  padding: 26px 0;
+  width: 100%;
+  text-align: left;
+  margin: 36px 0 0;
+}
+.writing-invitation > span {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.writing-invitation small {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.writing-invitation strong {
+  font-size: 18px;
+  font-weight: 500;
+}
+.writing-invitation span span {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.writing-invitation:hover strong {
+  color: var(--link);
+}
+.safari-page .desktop-experience section {
+  padding: 20px 0;
+}
+.safari-page .desktop-experience h2 {
+  font-size: 22px;
+}
+.safari-page li {
+  font-size: 13px;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+.safari-page ul {
+  padding-left: 18px;
+}
+.profile-education {
+  padding-top: 35px;
+  border-top: 1px solid var(--line);
+  margin-top: 25px;
+}
+.profile-education h1 {
+  font-size: 25px;
+}
+.profile-education .education-entry h2 {
+  font-size: 17px;
+}
+.profile-education a {
+  color: var(--link);
+  font-size: 12px;
+}
+.project-entry {
+  padding: 25px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 26px 0;
+}
+.project-entry h2 {
+  margin-top: 12px;
+}
+.safari-page .quiet-note,
+.safari-page .section-intro {
+  color: var(--muted);
+  font-size: 13px;
+}
+.resume-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+  font-size: 12px;
+}
+.resume-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.primary-action {
+  background: #007aff;
+  color: white !important;
+  border-radius: 7px;
+  padding: 9px 14px;
+}
+.safari-resume h1 {
+  margin-bottom: 12px;
+}
+.safari-resume h2 {
+  font-size: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 25px;
+  margin-top: 30px;
+}
+.safari-resume h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 18px 0 6px;
+}
+.safari-resume p,
+.safari-resume li {
+  font-size: 12px;
+}
+.safari-resume a {
+  color: var(--link);
+}
+.profile-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  margin-top: 42px;
+  padding-top: 22px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.profile-footer > span {
+  margin-right: auto;
+}
+.profile-footer a {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.share-status {
+  position: absolute;
+  top: 64px;
+  right: 15px;
+  z-index: 5;
+  padding: 12px 18px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 3px 16px #0003;
+  font-size: 12px;
+}
+.desktop-writing small {
+  max-width: 110px;
+  font-size: 10px;
+  color: white;
+}
+/* Notes keeps writing separate from the professional profile. */
+.application-window.notes-application {
+  left: 10%;
+  top: 12%;
+}
+.application-window.notes-application.notes-expanded {
+  left: 12px;
+  top: 40px;
+}
+.writing-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  height: 100%;
+}
+.writing-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+}
+.app-sidebar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 15px 18px 10px;
+  margin: 0;
+}
+.writing-folders {
+  padding: 0 8px 12px;
+}
+.writing-folders button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  background: transparent;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.writing-folders svg {
+  color: #c9a11b;
+}
+.writing-folders small {
+  margin-left: auto;
+  color: var(--muted);
+}
+.writing-folders button[aria-pressed="true"] {
+  background: #d8b44330;
+}
+.writing-list {
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+  padding: 9px;
+}
+.writing-list button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 10px;
+  text-align: left;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 12px;
+}
+.writing-list button.note-selected {
+  background: #d8b44330;
+}
+.writing-list button span {
+  color: var(--muted);
+  font-size: 10px;
+}
+.writing-list-empty {
+  color: var(--muted);
+  font-size: 12px;
+  padding: 12px 9px;
+}
+.writing-reader {
+  background: var(--paper);
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.writing-toolbar {
+  height: 42px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.writing-back {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  padding: 7px 0;
+  color: var(--link) !important;
+}
+.app-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 32px;
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  gap: 16px;
+}
+.app-empty > svg {
+  color: #a49a7f;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.app-empty .profile-kicker {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  margin: 4px 0 0;
+}
+.app-empty h1,
+.app-empty h2 {
+  font-size: 25px;
+  font-weight: 550;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.app-empty p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 340px;
+  margin: 0;
+}
+.empty-status {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.writing-empty {
+  flex: 1;
+  overflow: auto;
+}
+.writing-article {
+  padding: 35px 38px;
+  overflow-y: auto;
+}
+.writing-article h1,
+.standalone-writing h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 0 0 20px;
+}
+.writing-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.writing-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 20px 0 30px;
+}
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.markdown-body > * {
+  margin: 0 0 20px;
+}
+.markdown-body h2 {
+  margin-top: 32px;
+  font-size: 23px;
+  font-weight: 600;
+}
+.markdown-body h3 {
+  margin-top: 25px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.markdown-body a {
+  color: var(--link, #007aff);
+  text-decoration: underline;
+}
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 22px;
+}
+.markdown-body blockquote {
+  border-left: 3px solid #b5a078;
+  padding-left: 18px;
+  color: var(--muted);
+}
+.markdown-body pre {
+  background: #8881;
+  padding: 16px;
+  border-radius: 7px;
+  overflow: auto;
+  font-size: 12px;
+}
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+}
+.standalone-writing {
+  max-width: 720px;
+  margin: auto;
+  padding: 55px 25px 80px;
+  --muted: #888;
+}
+.standalone-writing > a {
+  font-size: 13px;
+  color: #007aff;
+  display: inline-block;
+  margin-bottom: 45px;
+}
+.standalone-writing > article {
+  border-bottom: 1px solid #8883;
+  margin-bottom: 25px;
+  padding-bottom: 25px;
+}
+/* Read-only aspirations and a personally curated shelf. */
+.roadmap-layout,
+.finder-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+}
+.roadmap-sidebar,
+.finder-sidebar {
+  background: var(--sidebar);
+  border-right: 1px solid var(--line);
+  padding: 24px 12px;
+}
+.roadmap-sidebar > svg {
+  color: #f49333;
+  margin: 4px 10px 12px;
+}
+.roadmap-sidebar h2 {
+  margin: 0 10px 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.roadmap-sidebar > p {
+  margin: 0 10px 25px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.roadmap-sidebar nav button,
+.finder-sidebar nav button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  background: transparent;
+  font-size: 12px;
+  text-align: left;
+}
+.roadmap-sidebar nav button small {
+  margin-left: auto;
+  color: var(--muted);
+}
+.roadmap-sidebar nav button[aria-pressed="true"] {
+  background: #f4933320;
+}
+.roadmap-content {
+  overflow-y: auto;
+  background: var(--paper);
+  padding: 32px;
+}
+.roadmap-content header .profile-kicker {
+  margin-bottom: 12px;
+}
+.roadmap-content h1 {
+  font-size: 30px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  color: #df832c;
+  margin: 0 0 10px;
+}
+.roadmap-content header p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+.roadmap-content progress {
+  width: 100%;
+  height: 4px;
+  accent-color: #df832c;
+}
+.roadmap-goals {
+  list-style: none;
+  margin: 25px 0 0;
+  padding: 0;
+}
+.roadmap-goals li {
+  display: flex;
+  gap: 13px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.goal-marker {
+  color: #aaa;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.goal-completed {
+  color: #4b9563;
+}
+.goal-in-progress {
+  color: #df832c;
+}
+.roadmap-goals h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 550;
+}
+.roadmap-goals p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.goal-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.goal-meta span:first-child {
+  color: #bd792e;
+}
+.roadmap-goals a {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--link);
+  font-size: 12px;
+  margin-top: 14px;
+}
+.compact-empty {
+  min-height: 280px;
+  height: auto;
+}
+.finder-sidebar {
+  padding: 12px 9px;
+}
+.finder-sidebar .app-sidebar-label {
+  padding: 9px 10px 15px;
+}
+.finder-sidebar nav button[aria-pressed="true"] {
+  background: #007aff1c;
+}
+.finder-sidebar svg {
+  color: #58a4df;
+}
+.finder-main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+.finder-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.finder-toolbar h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.finder-toolbar .note-search {
+  width: 145px;
+  margin: 0;
+}
+.finder-entries {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.finder-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 15px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+.finder-status span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.resource-entry {
+  padding: 25px;
+  border-bottom: 1px solid var(--line);
+}
+.resource-entry .profile-kicker {
+  margin-bottom: 10px;
+}
+.resource-entry h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.resource-entry a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.resource-entry p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.resource-tradeoff {
+  color: var(--muted);
+}
+.native-about-link {
+  margin-top: 16px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 7px 12px;
+  background: var(--paper);
+  border-radius: 5px;
+  font-size: 12px;
+}
+.desktop-night .safari-address {
+  background: #ffffff0b;
+}
+.desktop-night .safari-tabs button {
+  background: #0001;
+}
+.desktop-night .safari-tabs button[aria-selected="true"] {
+  background: var(--paper);
+}
+/* Mobile uses the same app identities with a single, readable foreground view. */
+@container (max-width: 650px) {
+  .safari-toolbar {
+    grid-template-columns: 105px minmax(80px, 1fr) 25px;
+    gap: 10px;
+  }
+  .safari-navigation {
+    gap: 6px;
+  }
+  .safari-path {
+    display: none;
+  }
+  .profile-masthead {
+    padding: 18px 25px;
+  }
+  .profile-masthead > span:last-child {
+    font-size: 9px;
+  }
+  .safari-page-content {
+    padding: 30px 26px 24px;
+  }
+  .safari-sidebar {
+    width: 155px;
+  }
+}
+@container (max-width: 560px) {
+  .writing-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .writing-sidebar {
+    display: none;
+  }
+  .writing-show-list .writing-sidebar {
+    display: flex;
+  }
+  .writing-show-list .writing-reader {
+    display: none;
+  }
+  .writing-back {
+    display: flex;
+  }
+  .writing-toolbar > span {
+    margin-left: auto;
+  }
+  .writing-article {
+    padding: 30px 24px;
+  }
+  .roadmap-layout,
+  .finder-layout {
+    grid-template-columns: minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
+  }
+  .roadmap-sidebar {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+  }
+  .roadmap-sidebar > svg,
+  .roadmap-sidebar > h2,
+  .roadmap-sidebar > p {
+    display: none;
+  }
+  .roadmap-sidebar nav {
+    display: flex;
+    gap: 5px;
+  }
+  .roadmap-sidebar nav button {
+    justify-content: center;
+    font-size: 11px;
+    padding: 9px 6px;
+    margin: 0;
+  }
+  .roadmap-sidebar nav button small {
+    display: none;
+  }
+  .roadmap-content {
+    flex: 1;
+    min-height: 0;
+    padding: 25px;
+  }
+  .finder-sidebar {
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+  }
+  .finder-sidebar .app-sidebar-label {
+    display: none;
+  }
+  .finder-sidebar nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+  }
+  .finder-sidebar nav button {
+    white-space: nowrap;
+    width: auto;
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 8px 6px;
+    margin: 0;
+  }
+  .finder-sidebar nav button svg {
+    display: none;
+  }
+  .finder-main {
+    flex: 1;
+  }
+  .finder-toolbar {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+  .finder-toolbar h1 {
+    font-size: 13px;
+  }
+  .finder-toolbar .note-search {
+    width: 110px;
+  }
+}
+@media (max-width: 760px) {
+  .application-window,
+  .application-window.notes-expanded,
+  .application-window.notes-application,
+  .application-window.notes-application.notes-expanded {
+    left: 8px;
+    top: 40px;
+    width: calc(100% - 16px);
+    height: calc(100% - 132px);
+    min-height: 260px;
+    animation: none;
+  }
+  .notes-window:not(.front-window) {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .safari-window .app-titlebar {
+    height: 54px;
+  }
+  .safari-window .app-workspace {
+    height: calc(100% - 54px);
+  }
+  .safari-window .traffic-lights {
+    left: 12px;
+    top: 21px;
+    gap: 6px;
+  }
+  .safari-toolbar {
+    grid-template-columns: 56px minmax(80px, 1fr) 22px;
+    padding-left: 78px;
+    padding-right: 13px;
+    gap: 8px;
+  }
+  .safari-navigation {
+    gap: 3px;
+  }
+  .safari-navigation button:first-child {
+    display: none;
+  }
+  .safari-toolbar button {
+    padding: 0;
+    min-height: 30px;
+  }
+  .safari-address {
+    padding: 7px 4px;
+    font-size: 10px;
+  }
+  .safari-tabs {
+    padding: 0 4px;
+  }
+  .safari-tabs button {
+    gap: 5px;
+    padding: 10px 5px;
+    font-size: 11px;
+  }
+  .safari-favicon {
+    display: none;
+  }
+  .profile-masthead {
+    padding: 18px 22px;
+  }
+  .profile-masthead > span:last-child {
+    display: none;
+  }
+  .safari-page-content {
+    padding: 28px 23px 22px;
+  }
+  .profile-overview .note-portrait {
+    width: 58px;
+    height: 58px;
+    margin-left: 12px;
+  }
+  .safari-page p {
+    font-size: 13px;
+  }
+  .profile-overview .intro-lead {
+    font-size: 13px;
+  }
+  .profile-overview h2 {
+    font-size: 28px;
+  }
+  .profile-footer {
+    gap: 12px;
+  }
+  .profile-footer > span {
+    width: 100%;
+  }
+  .safari-sidebar {
+    width: 135px;
+  }
+  .app-empty {
+    padding: 30px 24px;
+  }
+  .app-empty h1,
+  .app-empty h2 {
+    font-size: 23px;
+  }
+  .writing-empty {
+    justify-content: center;
+  }
+}
+@media (max-width: 370px) {
+  .safari-toolbar {
+    grid-template-columns: 45px minmax(65px, 1fr) 20px;
+    gap: 4px;
+    padding-left: 72px;
+  }
+  .safari-address {
+    font-size: 9px;
+  }
+  .finder-toolbar h1 {
+    font-size: 12px;
+  }
+}
+@media print {
+  .safari-toolbar,
+  .safari-tabs,
+  .safari-sidebar,
+  .profile-masthead,
+  .profile-footer,
+  .writing-invitation,
+  .resume-actions {
+    display: none !important;
+  }
+}
